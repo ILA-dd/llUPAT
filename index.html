@@ -1966,6 +1966,7 @@
 
             .filter-tabs {
                 gap: 0.5rem;
+                flex-wrap: wrap;
             }
 
             .filter-tab {
@@ -1984,6 +1985,75 @@
             .ticket-message {
                 max-width: 95%;
             }
+
+            .modal-window {
+                padding: 1.5rem;
+                max-height: 85vh;
+                margin: 1rem;
+            }
+
+            .modal-actions {
+                grid-template-columns: 1fr;
+            }
+
+            .auth-modal-content {
+                padding: 1.5rem;
+                margin: 1rem;
+            }
+
+            .ticket-actions {
+                flex-direction: column;
+            }
+
+            .ticket-actions .btn {
+                width: 100%;
+            }
+
+            .admin-table-wrapper {
+                overflow-x: auto;
+            }
+
+            .admin-nav {
+                flex-wrap: wrap;
+                gap: 0.5rem;
+            }
+
+            .admin-nav-btn {
+                flex: 1;
+                min-width: 80px;
+                padding: 0.5rem;
+                font-size: 0.85rem;
+            }
+
+            main {
+                padding-bottom: 80px;
+            }
+
+            .container {
+                padding: 1rem;
+            }
+
+            .hero {
+                padding: 1rem;
+                min-height: 50vh;
+            }
+
+            .hero-title {
+                font-size: clamp(2.5rem, 12vw, 4rem);
+            }
+
+            .section-title {
+                font-size: 1.5rem;
+            }
+
+            .card {
+                padding: 1rem;
+            }
+
+            .requirements-block {
+                flex-direction: column;
+                gap: 1rem;
+            }
         }
 
         /* Mobile Nav */
@@ -1995,7 +2065,7 @@
             width: 100%;
             background: var(--bg-card);
             border-top: 1px solid var(--border);
-            padding: 0.5rem;
+            padding: 0.3rem;
             z-index: 1000;
         }
 
@@ -2006,22 +2076,23 @@
             }
 
             .footer {
-                margin-bottom: 60px;
+                margin-bottom: 70px;
             }
         }
 
         .mobile-nav-btn {
             flex: 1;
-            padding: 0.75rem;
+            padding: 0.5rem 0.25rem;
             background: none;
             border: none;
             color: var(--text-muted);
-            font-size: 0.75rem;
+            font-size: 0.65rem;
             cursor: pointer;
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 0.25rem;
+            gap: 0.15rem;
+            white-space: nowrap;
         }
 
         .mobile-nav-btn.active {
@@ -2029,7 +2100,7 @@
         }
 
         .mobile-nav-btn span {
-            font-size: 1.2rem;
+            font-size: 1.1rem;
         }
     </style>
 </head>
@@ -2588,6 +2659,10 @@
         <button class="mobile-nav-btn" onclick="App.showSection('tickets')" data-section="tickets">
             <span>🎫</span>
             Тикеты
+        </button>
+        <button class="mobile-nav-btn" onclick="App.showSection('profile')" data-section="profile">
+            <span>👤</span>
+            Профиль
         </button>
         <button class="mobile-nav-btn" onclick="App.showSection('admin')" data-section="admin">
             <span>⚙️</span>
