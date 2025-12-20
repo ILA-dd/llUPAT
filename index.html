@@ -2759,6 +2759,13 @@
             setTimeout(() => toast.classList.remove('show'), 3000);
         }
 
+        function escapeHtml(text) {
+            if (!text) return '';
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
         function getDefaultAvatar(id) {
             // Используем официальные Default Avatars Discord
             // Формула: (user_id >> 22) % 6 для новых аккаунтов
@@ -2939,10 +2946,10 @@
                              onerror="this.src='${getDefaultAvatar(m.id)}'">
                     </div>
                     <div class="member-info">
-                        <div class="member-name">${m.name}</div>
+                        <div class="member-name">${escapeHtml(m.name)}</div>
                         <div class="member-badges">
                             <span class="game-mode-badge ${m.gameMode}">${m.gameMode.toUpperCase()}</span>
-                            <span class="best-role" style="color: ${m.roleColor || 'var(--secondary)'}; border-color: ${m.roleColor || 'var(--secondary)'}">${m.bestRole}</span>
+                            <span class="best-role" style="color: ${m.roleColor || 'var(--secondary)'}; border-color: ${m.roleColor || 'var(--secondary)'}">${escapeHtml(m.bestRole)}</span>
                             ${m.birthday ? '<span class="birthday-badge">🎂 ДР!</span>' : ''}
                         </div>
                     </div>
@@ -4317,13 +4324,13 @@
                         <div class="member-row-info">
                             <img src="${m.avatarUrl || ''}" onerror="this.src='${getDefaultAvatar(m.id)}'">
                             <div>
-                                <div class="member-row-name">${m.name}</div>
+                                <div class="member-row-name">${escapeHtml(m.name)}</div>
                                 <div class="member-row-id">${m.id}</div>
                             </div>
                         </div>
                     </td>
                     <td><span class="role-badge" style="color: var(--${m.gameMode}-color); border-color: var(--${m.gameMode}-color)">${m.gameMode.toUpperCase()}</span></td>
-                    <td><span class="role-badge" style="color: ${m.roleColor || '#00b4d8'}; border-color: ${m.roleColor || '#00b4d8'}">${m.bestRole}</span></td>
+                    <td><span class="role-badge" style="color: ${m.roleColor || '#00b4d8'}; border-color: ${m.roleColor || '#00b4d8'}">${escapeHtml(m.bestRole)}</span></td>
                     <td style="text-align: right;">
                         <button class="btn btn-edit" onclick="App.openEditModal('${m.id}')">✏️</button>
                         <button class="btn btn-danger" onclick="App.deleteMember('${m.id}')">🗑️</button>
