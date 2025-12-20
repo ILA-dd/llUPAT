@@ -2665,6 +2665,57 @@
         </div>
     </div>
 
+    <!-- PASSWORD CHANGE MODAL -->
+    <div id="password-modal" class="modal-overlay">
+        <div class="modal-window" style="max-width: 450px;">
+            <button class="close-modal" onclick="App.closePasswordModal()">×</button>
+            <div class="modal-header">
+                <h2>🔐 Смена пароля</h2>
+            </div>
+
+            <div class="form-group">
+                <label>Текущий пароль</label>
+                <div style="position: relative;">
+                    <input type="password" id="current-password" placeholder="Введите текущий пароль"
+                        style="padding-right: 3rem;">
+                    <button type="button" onclick="App.togglePasswordVisibility('current-password', this)"
+                        style="position: absolute; right: 0.5rem; top: 50%; transform: translateY(-50%); background: none; border: none; color: var(--text-muted); cursor: pointer; padding: 0.5rem; font-size: 1.2rem;">
+                        👁️
+                    </button>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>Новый пароль</label>
+                <div style="position: relative;">
+                    <input type="password" id="new-password" placeholder="Введите новый пароль"
+                        style="padding-right: 3rem;">
+                    <button type="button" onclick="App.togglePasswordVisibility('new-password', this)"
+                        style="position: absolute; right: 0.5rem; top: 50%; transform: translateY(-50%); background: none; border: none; color: var(--text-muted); cursor: pointer; padding: 0.5rem; font-size: 1.2rem;">
+                        👁️
+                    </button>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>Повторите новый пароль</label>
+                <div style="position: relative;">
+                    <input type="password" id="confirm-password" placeholder="Повторите новый пароль"
+                        style="padding-right: 3rem;">
+                    <button type="button" onclick="App.togglePasswordVisibility('confirm-password', this)"
+                        style="position: absolute; right: 0.5rem; top: 50%; transform: translateY(-50%); background: none; border: none; color: var(--text-muted); cursor: pointer; padding: 0.5rem; font-size: 1.2rem;">
+                        👁️
+                    </button>
+                </div>
+            </div>
+
+            <div class="modal-actions">
+                <button class="btn btn-secondary" onclick="App.closePasswordModal()">Отмена</button>
+                <button class="btn btn-primary" onclick="App.changePassword()">💾 Сохранить</button>
+            </div>
+        </div>
+    </div>
+
     <!-- ══════════════════════════════════════════════════════════════
          FIREBASE & SCRIPTS
     ══════════════════════════════════════════════════════════════ -->
@@ -2675,7 +2726,7 @@
         } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-database.js";
         import {
             getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged, createUserWithEmailAndPassword,
-            browserLocalPersistence, setPersistence
+            browserLocalPersistence, setPersistence, EmailAuthProvider, reauthenticateWithCredential, updatePassword
         } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-auth.js";
 
         const firebaseConfig = {
@@ -2983,6 +3034,16 @@
             container.innerHTML = `
                 <h3 class="card-title">📝 Создать тикет</h3>
 
+                <div style="background: var(--bg-elevated); border: 1px solid var(--border); border-left: 3px solid var(--primary); border-radius: 8px; padding: 1rem; margin-bottom: 1.5rem;">
+                    <p style="color: var(--primary); font-weight: 600; margin-bottom: 0.5rem;">📋 Как составить заявку:</p>
+                    <p style="color: var(--text-muted); font-size: 0.9rem; line-height: 1.6; margin: 0;">
+                        1) Ваше имя?<br>
+                        2) Ваш игровой никнейм?<br>
+                        3) Сколько вам лет?<br>
+                        4) Ваш дискорд для связи с вами?
+                    </p>
+                </div>
+
                 <div class="form-group">
                     <label>Ваше имя</label>
                     <input type="text" id="ticket-author" value="${username}" readonly 
@@ -3001,7 +3062,7 @@
 
                 <div class="form-group">
                     <label>Сообщение</label>
-                    <textarea id="ticket-message" placeholder="Опишите вашу заявку в клан..."></textarea>
+                    <textarea id="ticket-message" placeholder="Заполните заявку по шаблону выше..."></textarea>
                 </div>
 
                 <button class="btn btn-primary" onclick="App.createTicket()">Отправить тикет</button>
@@ -3181,6 +3242,16 @@
                     </div>
                 </div>
 
+                <div style="background: var(--bg-elevated); border: 1px solid var(--border); border-left: 3px solid var(--primary); border-radius: 8px; padding: 1rem; margin-bottom: 1.5rem;">
+                    <p style="color: var(--primary); font-weight: 600; margin-bottom: 0.5rem;">📋 Как составить заявку:</p>
+                    <p style="color: var(--text-muted); font-size: 0.9rem; line-height: 1.6; margin: 0;">
+                        1) Ваше имя?<br>
+                        2) Ваш игровой никнейм?<br>
+                        3) Сколько вам лет?<br>
+                        4) Ваш дискорд для связи с вами?
+                    </p>
+                </div>
+
                 <div class="ticket-messages" id="ticket-messages">
                     ${ticket.messages.map(msg => `
                         <div class="ticket-message ${msg.isAdmin ? 'admin' : 'user'}">
@@ -3264,7 +3335,7 @@
             }
 
             // Получаем ник текущего пользователя
-            const authorName = State.isAdmin ? 'Администратор' : (State.currentUserData?.username || 'Пользователь');
+            const authorName = State.currentUserData?.username || 'Пользователь';
 
             const newMessage = {
                 id: ticket.messages.length + 1,
@@ -3408,6 +3479,7 @@
             const ticket = State.tickets[ticketId];
             if (!ticket) return;
 
+            const isAlreadyOpen = State.currentTicketId === ticketId;
             State.currentTicketId = ticketId;
 
             const modal = $('ticket-modal');
@@ -3422,6 +3494,16 @@
                     <span>📋 ${ticket.id}</span>
                     <span>📅 ${formatDate(ticket.createdAt)}</span>
                     <span class="ticket-status ${ticket.status}">${getStatusLabel(ticket.status)}</span>
+                </div>
+
+                <div style="background: var(--bg-elevated); border: 1px solid var(--border); border-left: 3px solid var(--primary); border-radius: 8px; padding: 1rem; margin-bottom: 1.5rem;">
+                    <p style="color: var(--primary); font-weight: 600; margin-bottom: 0.5rem;">📋 Как составить заявку:</p>
+                    <p style="color: var(--text-muted); font-size: 0.9rem; line-height: 1.6; margin: 0;">
+                        1) Ваше имя?<br>
+                        2) Ваш игровой никнейм?<br>
+                        3) Сколько вам лет?<br>
+                        4) Ваш дискорд для связи с вами?
+                    </p>
                 </div>
 
                 <div class="ticket-messages" id="modal-ticket-messages" style="max-height: 300px;">
@@ -3472,8 +3554,11 @@
                 `}
             `;
 
-            modal.style.display = 'flex';
-            setTimeout(() => modal.classList.add('open'), 10);
+            // Показываем модальное окно только если оно еще не открыто
+            if (!isAlreadyOpen) {
+                modal.style.display = 'flex';
+                setTimeout(() => modal.classList.add('open'), 10);
+            }
 
             // Scroll messages to bottom
             const messagesContainer = $('modal-ticket-messages');
@@ -3495,7 +3580,7 @@
 
             const newMessage = {
                 id: ticket.messages.length + 1,
-                author: 'Администратор',
+                author: State.currentUserData?.username || 'Администратор',
                 content: replyText,
                 isAdmin: true,
                 timestamp: Date.now()
@@ -3513,7 +3598,9 @@
             update(ref(db), updates)
                 .then(() => {
                     showToast('Ответ отправлен!');
-                    closeTicketModal();
+                    $('modal-ticket-reply').value = '';
+                    // Небольшая задержка чтобы Firebase обновил данные
+                    setTimeout(() => openAdminTicketModal(ticketId), 100);
                 })
                 .catch(err => showToast('Ошибка: ' + err.message, true));
         }
@@ -4424,6 +4511,104 @@
             });
         }
 
+        // ═══════════════════════════════════════════════════════════
+        // PASSWORD CHANGE FUNCTIONS
+        // ═══════════════════════════════════════════════════════════
+        function openPasswordModal() {
+            const modal = $('password-modal');
+            if (modal) {
+                modal.classList.add('open');
+                // Очищаем поля при открытии
+                $('current-password').value = '';
+                $('new-password').value = '';
+                $('confirm-password').value = '';
+            }
+        }
+
+        function closePasswordModal() {
+            const modal = $('password-modal');
+            if (modal) {
+                modal.classList.remove('open');
+            }
+        }
+
+        function togglePasswordVisibility(inputId, button) {
+            const input = $(inputId);
+            if (!input) return;
+
+            if (input.type === 'password') {
+                input.type = 'text';
+                button.textContent = '🙈';
+            } else {
+                input.type = 'password';
+                button.textContent = '👁️';
+            }
+        }
+
+        async function changePassword() {
+            const currentPassword = $('current-password')?.value;
+            const newPassword = $('new-password')?.value;
+            const confirmPassword = $('confirm-password')?.value;
+
+            // Валидация
+            if (!currentPassword || !newPassword || !confirmPassword) {
+                showToast('Заполните все поля', true);
+                return;
+            }
+
+            if (newPassword !== confirmPassword) {
+                showToast('Новые пароли не совпадают', true);
+                return;
+            }
+
+            if (newPassword.length < 6) {
+                showToast('Новый пароль должен быть минимум 6 символов', true);
+                return;
+            }
+
+            if (currentPassword === newPassword) {
+                showToast('Новый пароль должен отличаться от текущего', true);
+                return;
+            }
+
+            const user = auth.currentUser;
+            if (!user || !user.email) {
+                showToast('Пользователь не авторизован', true);
+                return;
+            }
+
+            try {
+                // Реаутентификация пользователя
+                const credential = EmailAuthProvider.credential(user.email, currentPassword);
+                await reauthenticateWithCredential(user, credential);
+
+                // Обновление пароля
+                await updatePassword(user, newPassword);
+
+                // Очистка полей
+                $('current-password').value = '';
+                $('new-password').value = '';
+                $('confirm-password').value = '';
+
+                // Закрываем модальное окно
+                closePasswordModal();
+
+                showToast('Пароль успешно изменён! ✅');
+            } catch (error) {
+                console.error('Password change error:', error);
+
+                if (error.code === 'auth/wrong-password' || error.code === 'auth/invalid-credential') {
+                    showToast('Неверный текущий пароль', true);
+                } else if (error.code === 'auth/weak-password') {
+                    showToast('Слишком слабый пароль', true);
+                } else if (error.code === 'auth/requires-recent-login') {
+                    showToast('Требуется повторный вход в аккаунт', true);
+                } else {
+                    showToast('Ошибка смены пароля: ' + error.message, true);
+                }
+            }
+        }
+
         function renderProfile(userData) {
             const container = $('profile-content');
             if (!container) return;
@@ -4458,7 +4643,11 @@
                     </div>
                 </div>
                 
-                <button class="btn btn-danger" onclick="App.logout()" style="width: 100%; margin-top: 2rem;">
+                <button class="btn btn-secondary" onclick="App.openPasswordModal()" style="width: 100%; margin-top: 2rem;">
+                    🔐 Сменить пароль
+                </button>
+                
+                <button class="btn btn-danger" onclick="App.logout()" style="width: 100%; margin-top: 1rem;">
                     🚪 Выйти из аккаунта
                 </button>
             `;
@@ -4502,7 +4691,12 @@
             closeTicketModal,
             // Proxy server functions
             checkProxyStatus,
-            refreshAllAvatars
+            refreshAllAvatars,
+            // Password change functions
+            openPasswordModal,
+            closePasswordModal,
+            togglePasswordVisibility,
+            changePassword
         };
 
         // Start the app
