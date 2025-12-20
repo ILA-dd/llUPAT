@@ -2126,9 +2126,13 @@
                         <div class="stat-value" id="members-count">0</div>
                         <div class="stat-label">Участников</div>
                     </div>
+                    <div class="stat">
+                        <div class="stat-value">2020</div>
+                        <div class="stat-label">Год основания</div>
+                    </div>
                 </div>
 
-                <a href="https://discord.gg/mUrQmRq6j4" target="_blank" class="cta-button">Подать заявку</a>
+                <button onclick="App.showSection('tickets')" class="cta-button">Подать тикет</button>
             </div>
 
             <div class="modes-section">
@@ -2511,19 +2515,22 @@
                                 <li>Получите Bot Token на <a href="https://discord.com/developers/applications"
                                         target="_blank" style="color: var(--secondary);">Discord Developer Portal</a>
                                 </li>
-                                <li>Откройте ваш проект в <a href="https://vercel.com/dashboard"
-                                        target="_blank" style="color: var(--secondary);">Vercel Dashboard</a>
+                                <li>Откройте ваш проект в <a href="https://vercel.com/dashboard" target="_blank"
+                                        style="color: var(--secondary);">Vercel Dashboard</a>
                                 </li>
                                 <li>Перейдите в <strong>Settings</strong> → <strong>Environment Variables</strong></li>
                                 <li>Добавьте переменную:
-                                    <pre style="background: var(--bg-dark); padding: 0.5rem; border-radius: 4px; margin-top: 0.5rem; overflow-x: auto;"><code>DISCORD_BOT_TOKEN = ваш_токен</code></pre>
+                                    <pre
+                                        style="background: var(--bg-dark); padding: 0.5rem; border-radius: 4px; margin-top: 0.5rem; overflow-x: auto;"><code>DISCORD_BOT_TOKEN = ваш_токен</code></pre>
                                 </li>
                                 <li>Нажмите <strong>Save</strong> и сделайте <strong>Redeploy</strong></li>
                             </ol>
-                            <div style="margin-top: 1rem; padding: 1rem; background: rgba(6, 214, 160, 0.1); border-radius: 8px; border-left: 3px solid var(--success);">
+                            <div
+                                style="margin-top: 1rem; padding: 1rem; background: rgba(6, 214, 160, 0.1); border-radius: 8px; border-left: 3px solid var(--success);">
                                 <strong style="color: var(--success);">✅ После настройки:</strong>
-                                <span style="color: var(--text-muted);"> Аватарки будут загружаться автоматически через 
-                                    <code style="color: var(--secondary);">cdn.discordapp.com/avatars/{user_id}/{hash}.png</code></span>
+                                <span style="color: var(--text-muted);"> Аватарки будут загружаться автоматически через
+                                    <code
+                                        style="color: var(--secondary);">cdn.discordapp.com/avatars/{user_id}/{hash}.png</code></span>
                             </div>
                         </div>
 
@@ -3594,7 +3601,7 @@
                     if (username && !data.isDefault) {
                         showToast(`✓ ${username}`, false);
                     }
-                    
+
                     if (data.error) {
                         console.log('API warning:', data.error);
                     }
