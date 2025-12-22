@@ -1273,12 +1273,12 @@
         .mode-checkbox {
             transition: all 0.2s ease;
         }
-        
+
         .mode-checkbox:has(input:checked) {
             transform: scale(1.05);
             box-shadow: 0 0 15px currentColor;
         }
-        
+
         .mode-checkbox:hover {
             transform: scale(1.02);
         }
@@ -2447,20 +2447,25 @@
 
                                     <div class="form-group">
                                         <label>Game Modes (можно выбрать несколько)</label>
-                                        <div class="game-modes-checkboxes" style="display: flex; flex-wrap: wrap; gap: 0.8rem; margin-top: 0.5rem;">
-                                            <label class="checkbox-label mode-checkbox" style="background: rgba(239, 71, 111, 0.1); padding: 0.5rem 1rem; border-radius: 8px; border: 1px solid var(--block-color); cursor: pointer;">
+                                        <div class="game-modes-checkboxes"
+                                            style="display: flex; flex-wrap: wrap; gap: 0.8rem; margin-top: 0.5rem;">
+                                            <label class="checkbox-label mode-checkbox"
+                                                style="background: rgba(239, 71, 111, 0.1); padding: 0.5rem 1rem; border-radius: 8px; border: 1px solid var(--block-color); cursor: pointer;">
                                                 <input type="checkbox" id="inp-mode-block" value="block">
                                                 🔨 Block
                                             </label>
-                                            <label class="checkbox-label mode-checkbox" style="background: rgba(114, 9, 183, 0.1); padding: 0.5rem 1rem; border-radius: 8px; border: 1px solid var(--kog-color); cursor: pointer;">
+                                            <label class="checkbox-label mode-checkbox"
+                                                style="background: rgba(114, 9, 183, 0.1); padding: 0.5rem 1rem; border-radius: 8px; border: 1px solid var(--kog-color); cursor: pointer;">
                                                 <input type="checkbox" id="inp-mode-kog" value="kog">
                                                 ⚡ Kog
                                             </label>
-                                            <label class="checkbox-label mode-checkbox" style="background: rgba(255, 209, 102, 0.1); padding: 0.5rem 1rem; border-radius: 8px; border: 1px solid var(--race-color); cursor: pointer;">
+                                            <label class="checkbox-label mode-checkbox"
+                                                style="background: rgba(255, 209, 102, 0.1); padding: 0.5rem 1rem; border-radius: 8px; border: 1px solid var(--race-color); cursor: pointer;">
                                                 <input type="checkbox" id="inp-mode-race" value="race">
                                                 🏎️ Race
                                             </label>
-                                            <label class="checkbox-label mode-checkbox" style="background: rgba(6, 214, 160, 0.1); padding: 0.5rem 1rem; border-radius: 8px; border: 1px solid var(--fng-color); cursor: pointer;">
+                                            <label class="checkbox-label mode-checkbox"
+                                                style="background: rgba(6, 214, 160, 0.1); padding: 0.5rem 1rem; border-radius: 8px; border: 1px solid var(--fng-color); cursor: pointer;">
                                                 <input type="checkbox" id="inp-mode-fng" value="fng">
                                                 🎯 FNG
                                             </label>
@@ -2714,20 +2719,25 @@
 
             <div class="form-group">
                 <label>Game Modes</label>
-                <div class="game-modes-checkboxes" style="display: flex; flex-wrap: wrap; gap: 0.8rem; margin-top: 0.5rem;">
-                    <label class="checkbox-label mode-checkbox" style="background: rgba(239, 71, 111, 0.1); padding: 0.5rem 1rem; border-radius: 8px; border: 1px solid var(--block-color); cursor: pointer;">
+                <div class="game-modes-checkboxes"
+                    style="display: flex; flex-wrap: wrap; gap: 0.8rem; margin-top: 0.5rem;">
+                    <label class="checkbox-label mode-checkbox"
+                        style="background: rgba(239, 71, 111, 0.1); padding: 0.5rem 1rem; border-radius: 8px; border: 1px solid var(--block-color); cursor: pointer;">
                         <input type="checkbox" id="edit-mode-block" value="block">
                         🔨 Block
                     </label>
-                    <label class="checkbox-label mode-checkbox" style="background: rgba(114, 9, 183, 0.1); padding: 0.5rem 1rem; border-radius: 8px; border: 1px solid var(--kog-color); cursor: pointer;">
+                    <label class="checkbox-label mode-checkbox"
+                        style="background: rgba(114, 9, 183, 0.1); padding: 0.5rem 1rem; border-radius: 8px; border: 1px solid var(--kog-color); cursor: pointer;">
                         <input type="checkbox" id="edit-mode-kog" value="kog">
                         ⚡ Kog
                     </label>
-                    <label class="checkbox-label mode-checkbox" style="background: rgba(255, 209, 102, 0.1); padding: 0.5rem 1rem; border-radius: 8px; border: 1px solid var(--race-color); cursor: pointer;">
+                    <label class="checkbox-label mode-checkbox"
+                        style="background: rgba(255, 209, 102, 0.1); padding: 0.5rem 1rem; border-radius: 8px; border: 1px solid var(--race-color); cursor: pointer;">
                         <input type="checkbox" id="edit-mode-race" value="race">
                         🏎️ Race
                     </label>
-                    <label class="checkbox-label mode-checkbox" style="background: rgba(6, 214, 160, 0.1); padding: 0.5rem 1rem; border-radius: 8px; border: 1px solid var(--fng-color); cursor: pointer;">
+                    <label class="checkbox-label mode-checkbox"
+                        style="background: rgba(6, 214, 160, 0.1); padding: 0.5rem 1rem; border-radius: 8px; border: 1px solid var(--fng-color); cursor: pointer;">
                         <input type="checkbox" id="edit-mode-fng" value="fng">
                         🎯 FNG
                     </label>
@@ -2835,7 +2845,7 @@
             browserLocalPersistence, setPersistence, EmailAuthProvider, reauthenticateWithCredential, updatePassword
         } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-auth.js";
         // App Check временно отключен для диагностики
-        // import { initializeAppCheck, ReCaptchaV3Provider } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-app-check.js";
+        import { initializeAppCheck, ReCaptchaV3Provider } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-app-check.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyBJbaGaHwdGEEz2xvIB3EM0BNpRU-fj4AU",
@@ -2852,10 +2862,10 @@
         const auth = getAuth(app);
 
         // App Check временно отключен - раскомментируй после настройки
-        // const appCheck = initializeAppCheck(app, {
-        //     provider: new ReCaptchaV3Provider('6Lc8mzMsAAAAAPrF2YNYrn-J23_9sPuk3Ly9qhkY'),
-        //     isTokenAutoRefreshEnabled: true
-        // });
+        const appCheck = initializeAppCheck(app, {
+            provider: new ReCaptchaV3Provider('6Lc8mzMsAAAAAPrF2YNYrn-J23_9sPuk3Ly9qhkY'),
+            isTokenAutoRefreshEnabled: true
+        });
 
         // Устанавливаем сохранение сессии в localStorage
         setPersistence(auth, browserLocalPersistence);
@@ -3058,10 +3068,10 @@
 
             grid.innerHTML = filtered.map(m => {
                 const modes = m.gameModes || (m.gameMode ? [m.gameMode] : []);
-                const modeBadges = modes.map(mode => 
+                const modeBadges = modes.map(mode =>
                     `<span class="game-mode-badge ${mode}">${mode.toUpperCase()}</span>`
                 ).join('');
-                
+
                 return `
                 <div class="member-card">
                     <div class="member-avatar">
@@ -4332,14 +4342,14 @@
         function saveMember() {
             const id = $('inp-id').value.trim();
             const name = $('inp-name').value.trim();
-            
+
             // Собираем выбранные режимы игры
             const gameModes = [];
             if ($('inp-mode-block').checked) gameModes.push('block');
             if ($('inp-mode-kog').checked) gameModes.push('kog');
             if ($('inp-mode-race').checked) gameModes.push('race');
             if ($('inp-mode-fng').checked) gameModes.push('fng');
-            
+
             const role = $('inp-role').value.trim() || 'Участник';
             const roleColor = $('inp-role-color').value;
             const avatarUrl = $('preview-box').dataset.avatarUrl;
@@ -4348,7 +4358,7 @@
                 showToast('Заполните ID и никнейм!', true);
                 return;
             }
-            
+
             if (gameModes.length === 0) {
                 showToast('Выберите хотя бы один режим игры!', true);
                 return;
@@ -4394,14 +4404,14 @@
 
             $('edit-id').value = m.id;
             $('edit-name').value = m.name;
-            
+
             // Получаем массив режимов (поддержка старого формата с одним режимом)
             const modes = m.gameModes || (m.gameMode ? [m.gameMode] : []);
             $('edit-mode-block').checked = modes.includes('block');
             $('edit-mode-kog').checked = modes.includes('kog');
             $('edit-mode-race').checked = modes.includes('race');
             $('edit-mode-fng').checked = modes.includes('fng');
-            
+
             $('edit-role').value = m.bestRole;
             $('edit-role-color').value = m.roleColor || '#00b4d8';
             $('edit-birthday').checked = m.birthday || false;
@@ -4431,14 +4441,14 @@
         function saveModalChanges() {
             const id = $('edit-id').value;
             const name = $('edit-name').value.trim();
-            
+
             // Собираем выбранные режимы игры
             const gameModes = [];
             if ($('edit-mode-block').checked) gameModes.push('block');
             if ($('edit-mode-kog').checked) gameModes.push('kog');
             if ($('edit-mode-race').checked) gameModes.push('race');
             if ($('edit-mode-fng').checked) gameModes.push('fng');
-            
+
             const role = $('edit-role').value.trim();
             const color = $('edit-role-color').value;
             const avatarUrl = $('edit-preview-box').dataset.avatarUrl;
@@ -4448,7 +4458,7 @@
                 showToast('Имя не может быть пустым', true);
                 return;
             }
-            
+
             if (gameModes.length === 0) {
                 showToast('Выберите хотя бы один режим игры!', true);
                 return;
@@ -4479,10 +4489,10 @@
 
             Object.values(data).forEach(m => {
                 const modes = m.gameModes || (m.gameMode ? [m.gameMode] : []);
-                const modeBadges = modes.map(mode => 
+                const modeBadges = modes.map(mode =>
                     `<span class="role-badge" style="color: var(--${mode}-color); border-color: var(--${mode}-color)">${mode.toUpperCase()}</span>`
                 ).join(' ');
-                
+
                 const tr = document.createElement('tr');
                 tr.innerHTML = `
                     <td>
@@ -4508,7 +4518,7 @@
         function updateAdminStats(data) {
             const list = Object.values(data);
             $('stat-total').innerText = list.length;
-            
+
             // Считаем участников, у которых есть каждый режим
             $('stat-block').innerText = list.filter(m => {
                 const modes = m.gameModes || (m.gameMode ? [m.gameMode] : []);
