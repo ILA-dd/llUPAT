@@ -2120,6 +2120,129 @@
 </head>
 
 <body>
+    <!-- APP LOADING OVERLAY - показывается пока JS модуль загружается -->
+    <div id="app-loading-overlay" style="
+        position: fixed;
+        inset: 0;
+        background: #0d1117;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        z-index: 10000;
+        transition: opacity 0.3s ease;
+    ">
+        <div style="
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2rem;
+            font-weight: 900;
+            background: linear-gradient(135deg, #ff6b35, #00b4d8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: 4px;
+            margin-bottom: 2rem;
+        ">llUPAT</div>
+        
+        <!-- Progress bar -->
+        <div style="
+            width: 200px;
+            height: 4px;
+            background: rgba(255, 107, 53, 0.2);
+            border-radius: 2px;
+            overflow: hidden;
+            margin-bottom: 1rem;
+        ">
+            <div id="app-loading-progress" style="
+                width: 0%;
+                height: 100%;
+                background: linear-gradient(90deg, #ff6b35, #00b4d8);
+                border-radius: 2px;
+                transition: width 0.3s ease;
+            "></div>
+        </div>
+        
+        <!-- Status text -->
+        <div id="app-loading-status" style="
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 0.9rem;
+            color: #8b949e;
+            letter-spacing: 1px;
+        ">Загрузка модулей...</div>
+        
+        <style>
+            @keyframes app-loader-spin {
+                to { transform: rotate(360deg); }
+            }
+        </style>
+    </div>
+
+    <!-- Плейсхолдер для App до загрузки модуля -->
+    <script>
+        // Создаём очередь вызовов пока модуль загружается
+        window._appQueue = [];
+        window._appReady = false;
+        
+        // Функция обновления прогресса загрузки
+        window._updateLoadingProgress = function(percent, status) {
+            var progressBar = document.getElementById('app-loading-progress');
+            var statusText = document.getElementById('app-loading-status');
+            if (progressBar) progressBar.style.width = percent + '%';
+            if (statusText) statusText.textContent = status;
+        };
+        
+        // Начальный прогресс
+        setTimeout(function() {
+            window._updateLoadingProgress(10, 'Загрузка Firebase...');
+        }, 100);
+        
+        // Создаём Proxy для App который либо вызывает функцию, либо добавляет в очередь
+        window.App = new Proxy({}, {
+            get: function(target, prop) {
+                return function() {
+                    var args = Array.prototype.slice.call(arguments);
+                    if (window._appReady && window._realApp && window._realApp[prop]) {
+                        return window._realApp[prop].apply(null, args);
+                    } else {
+                        // Добавляем в очередь для выполнения после загрузки
+                        window._appQueue.push({ method: prop, args: args });
+                        console.log('[App] Queued:', prop, args);
+                    }
+                };
+            }
+        });
+        
+        // Функция для активации реального App
+        window._activateApp = function(realApp) {
+            window._realApp = realApp;
+            window._appReady = true;
+            
+            // Финальный прогресс
+            window._updateLoadingProgress(100, 'Готово!');
+            
+            // Выполняем отложенные вызовы
+            window._appQueue.forEach(function(item) {
+                if (realApp[item.method]) {
+                    console.log('[App] Executing queued:', item.method, item.args);
+                    realApp[item.method].apply(null, item.args);
+                }
+            });
+            window._appQueue = [];
+            
+            // Скрываем overlay с небольшой задержкой чтобы показать "Готово!"
+            setTimeout(function() {
+                var overlay = document.getElementById('app-loading-overlay');
+                if (overlay) {
+                    overlay.style.opacity = '0';
+                    setTimeout(function() { overlay.remove(); }, 300);
+                }
+            }, 200);
+            
+            // Заменяем Proxy на реальный объект
+            window.App = realApp;
+        };
+    </script>
+
     <div class="bg-pattern"></div>
     <div class="bg-grid"></div>
 
@@ -2836,6 +2959,9 @@
          FIREBASE & SCRIPTS
     ══════════════════════════════════════════════════════════════ -->
     <script type="module">
+        // Прогресс: модуль начал загружаться
+        if (window._updateLoadingProgress) window._updateLoadingProgress(20, 'Загрузка Firebase...');
+        
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-app.js";
         import {
             getDatabase, ref, set, onValue, remove, push, update, get
@@ -2860,6 +2986,9 @@
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
         const auth = getAuth(app);
+        
+        // Прогресс: Firebase инициализирован
+        if (window._updateLoadingProgress) window._updateLoadingProgress(50, 'Настройка безопасности...');
 
         // App Check временно отключен - раскомментируй после настройки
         const appCheck = initializeAppCheck(app, {
@@ -2869,6 +2998,9 @@
 
         // Устанавливаем сохранение сессии в localStorage
         setPersistence(auth, browserLocalPersistence);
+        
+        // Прогресс: App Check настроен
+        if (window._updateLoadingProgress) window._updateLoadingProgress(70, 'Загрузка интерфейса...');
 
         // ═══════════════════════════════════════════════════════════
         // UTILITY FUNCTIONS
@@ -4552,6 +4684,9 @@
         // INITIALIZATION
         // ═══════════════════════════════════════════════════════════
         function init() {
+            // Прогресс: начинаем загрузку данных
+            if (window._updateLoadingProgress) window._updateLoadingProgress(85, 'Загрузка данных...');
+            
             // Listen to members
             const membersRef = ref(db, 'members');
             onValue(membersRef, (snapshot) => {
@@ -4852,7 +4987,7 @@
         // ═══════════════════════════════════════════════════════════
         // EXPORT TO GLOBAL SCOPE
         // ═══════════════════════════════════════════════════════════
-        window.App = {
+        const _app = {
             showSection,
             showAdminTab,
             filterMembers,
@@ -4894,6 +5029,16 @@
             togglePasswordVisibility,
             changePassword
         };
+
+        // Прогресс: приложение готово к запуску
+        if (window._updateLoadingProgress) window._updateLoadingProgress(95, 'Запуск приложения...');
+
+        // Активируем App через систему очереди (для поддержки кликов до загрузки модуля)
+        if (typeof window._activateApp === 'function') {
+            window._activateApp(_app);
+        } else {
+            window.App = _app;
+        }
 
         // Start the app
         init();
