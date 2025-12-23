@@ -4105,17 +4105,13 @@
                 return;
             }
 
-            // Check if username already exists
+            // Check if username already exists via public 'usernames' table
             try {
-                const usersRef = ref(db, 'users');
-                const snapshot = await get(usersRef);
-                const users = snapshot.val() || {};
+                const usernameKey = username.toLowerCase();
+                const usernameRef = ref(db, 'usernames/' + usernameKey);
+                const usernameSnapshot = await get(usernameRef);
 
-                const usernameTaken = Object.values(users).some(
-                    u => u.username.toLowerCase() === username.toLowerCase()
-                );
-
-                if (usernameTaken) {
+                if (usernameSnapshot.exists()) {
                     $('register-error').textContent = 'Этот никнейм уже занят';
                     return;
                 }
@@ -4133,8 +4129,12 @@
                     email: email
                 };
 
-                // Save user data to database
-                await set(ref(db, 'users/' + uid), userData);
+                // Save user data AND register username atomically
+                const updates = {};
+                updates['users/' + uid] = userData;
+                updates['usernames/' + usernameKey] = uid;
+
+                await update(ref(db), updates);
 
                 // Manually update State and UI (faster than waiting for onAuthStateChanged)
                 State.currentUser = userCredential.user;
