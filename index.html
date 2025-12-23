@@ -2173,6 +2173,37 @@
             letter-spacing: 1px;
         ">Загрузка модулей...</div>
         
+        <!-- VPN Warning (скрыт по умолчанию) -->
+        <div id="app-loading-warning" style="
+            display: none;
+            margin-top: 2rem;
+            padding: 1rem 1.5rem;
+            background: rgba(239, 71, 111, 0.1);
+            border: 1px solid rgba(239, 71, 111, 0.3);
+            border-radius: 8px;
+            max-width: 320px;
+            text-align: center;
+        ">
+            <div style="color: #ef476f; font-weight: 600; margin-bottom: 0.5rem;">
+                ⚠️ Долгая загрузка
+            </div>
+            <div style="color: #8b949e; font-size: 0.85rem; line-height: 1.5;">
+                Firebase может быть недоступен в вашем регионе. 
+                Попробуйте использовать <span style="color: #00b4d8;">VPN</span>
+            </div>
+            <button onclick="location.reload()" style="
+                margin-top: 1rem;
+                padding: 0.5rem 1.5rem;
+                background: linear-gradient(135deg, #ff6b35, #e55a2b);
+                border: none;
+                border-radius: 6px;
+                color: white;
+                font-family: 'Rajdhani', sans-serif;
+                font-weight: 600;
+                cursor: pointer;
+            ">🔄 Попробовать снова</button>
+        </div>
+        
         <style>
             @keyframes app-loader-spin {
                 to { transform: rotate(360deg); }
@@ -2199,6 +2230,16 @@
             window._updateLoadingProgress(10, 'Загрузка Firebase...');
         }, 100);
         
+        // Таймаут - показываем предупреждение через 10 секунд
+        window._loadingTimeout = setTimeout(function() {
+            var warning = document.getElementById('app-loading-warning');
+            if (warning && !window._appReady) {
+                warning.style.display = 'block';
+                var statusText = document.getElementById('app-loading-status');
+                if (statusText) statusText.textContent = 'Подключение к серверу...';
+            }
+        }, 10000);
+        
         // Создаём Proxy для App который либо вызывает функцию, либо добавляет в очередь
         window.App = new Proxy({}, {
             get: function(target, prop) {
@@ -2219,6 +2260,11 @@
         window._activateApp = function(realApp) {
             window._realApp = realApp;
             window._appReady = true;
+            
+            // Очищаем таймаут предупреждения
+            if (window._loadingTimeout) {
+                clearTimeout(window._loadingTimeout);
+            }
             
             // Финальный прогресс
             window._updateLoadingProgress(100, 'Готово!');
