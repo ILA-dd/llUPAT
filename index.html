@@ -2117,7 +2117,7 @@
             font-size: 1.1rem;
         }
     </style>
-    
+
     <!-- Vercel Analytics -->
     <script defer src="/_vercel/insights/script.js"></script>
 </head>
@@ -2146,7 +2146,7 @@
             letter-spacing: 4px;
             margin-bottom: 2rem;
         ">llUPAT</div>
-        
+
         <!-- Progress bar -->
         <div style="
             width: 200px;
@@ -2164,7 +2164,7 @@
                 transition: width 0.3s ease;
             "></div>
         </div>
-        
+
         <!-- Status text -->
         <div id="app-loading-status" style="
             font-family: 'Rajdhani', sans-serif;
@@ -2172,7 +2172,7 @@
             color: #8b949e;
             letter-spacing: 1px;
         ">Загрузка модулей...</div>
-        
+
         <!-- VPN Warning (скрыт по умолчанию) -->
         <div id="app-loading-warning" style="
             display: none;
@@ -2188,7 +2188,7 @@
                 ⚠️ Долгая загрузка
             </div>
             <div style="color: #8b949e; font-size: 0.85rem; line-height: 1.5;">
-                Firebase может быть недоступен в вашем регионе. 
+                Firebase может быть недоступен в вашем регионе.
                 Попробуйте использовать <span style="color: #00b4d8;">VPN</span>
             </div>
             <button onclick="location.reload()" style="
@@ -2203,10 +2203,12 @@
                 cursor: pointer;
             ">🔄 Попробовать снова</button>
         </div>
-        
+
         <style>
             @keyframes app-loader-spin {
-                to { transform: rotate(360deg); }
+                to {
+                    transform: rotate(360deg);
+                }
             }
         </style>
     </div>
@@ -2216,22 +2218,22 @@
         // Создаём очередь вызовов пока модуль загружается
         window._appQueue = [];
         window._appReady = false;
-        
+
         // Функция обновления прогресса загрузки
-        window._updateLoadingProgress = function(percent, status) {
+        window._updateLoadingProgress = function (percent, status) {
             var progressBar = document.getElementById('app-loading-progress');
             var statusText = document.getElementById('app-loading-status');
             if (progressBar) progressBar.style.width = percent + '%';
             if (statusText) statusText.textContent = status;
         };
-        
+
         // Начальный прогресс
-        setTimeout(function() {
+        setTimeout(function () {
             window._updateLoadingProgress(10, 'Загрузка Firebase...');
         }, 100);
-        
+
         // Таймаут - показываем предупреждение через 10 секунд
-        window._loadingTimeout = setTimeout(function() {
+        window._loadingTimeout = setTimeout(function () {
             var warning = document.getElementById('app-loading-warning');
             if (warning && !window._appReady) {
                 warning.style.display = 'block';
@@ -2239,11 +2241,11 @@
                 if (statusText) statusText.textContent = 'Подключение к серверу...';
             }
         }, 10000);
-        
+
         // Создаём Proxy для App который либо вызывает функцию, либо добавляет в очередь
         window.App = new Proxy({}, {
-            get: function(target, prop) {
-                return function() {
+            get: function (target, prop) {
+                return function () {
                     var args = Array.prototype.slice.call(arguments);
                     if (window._appReady && window._realApp && window._realApp[prop]) {
                         return window._realApp[prop].apply(null, args);
@@ -2255,38 +2257,38 @@
                 };
             }
         });
-        
+
         // Функция для активации реального App
-        window._activateApp = function(realApp) {
+        window._activateApp = function (realApp) {
             window._realApp = realApp;
             window._appReady = true;
-            
+
             // Очищаем таймаут предупреждения
             if (window._loadingTimeout) {
                 clearTimeout(window._loadingTimeout);
             }
-            
+
             // Финальный прогресс
             window._updateLoadingProgress(100, 'Готово!');
-            
+
             // Выполняем отложенные вызовы
-            window._appQueue.forEach(function(item) {
+            window._appQueue.forEach(function (item) {
                 if (realApp[item.method]) {
                     console.log('[App] Executing queued:', item.method, item.args);
                     realApp[item.method].apply(null, item.args);
                 }
             });
             window._appQueue = [];
-            
+
             // Скрываем overlay с небольшой задержкой чтобы показать "Готово!"
-            setTimeout(function() {
+            setTimeout(function () {
                 var overlay = document.getElementById('app-loading-overlay');
                 if (overlay) {
                     overlay.style.opacity = '0';
-                    setTimeout(function() { overlay.remove(); }, 300);
+                    setTimeout(function () { overlay.remove(); }, 300);
                 }
             }, 200);
-            
+
             // Заменяем Proxy на реальный объект
             window.App = realApp;
         };
@@ -3010,7 +3012,7 @@
     <script type="module">
         // Прогресс: модуль начал загружаться
         if (window._updateLoadingProgress) window._updateLoadingProgress(20, 'Загрузка Firebase...');
-        
+
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-app.js";
         import {
             getDatabase, ref, set, onValue, remove, push, update, get
@@ -3035,7 +3037,7 @@
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
         const auth = getAuth(app);
-        
+
         // Прогресс: Firebase инициализирован
         if (window._updateLoadingProgress) window._updateLoadingProgress(50, 'Настройка безопасности...');
 
@@ -3047,7 +3049,7 @@
 
         // Устанавливаем сохранение сессии в localStorage
         setPersistence(auth, browserLocalPersistence);
-        
+
         // Прогресс: App Check настроен
         if (window._updateLoadingProgress) window._updateLoadingProgress(70, 'Загрузка интерфейса...');
 
@@ -3321,7 +3323,7 @@
 
             // Check if user has active ticket (open or in-progress) - check directly from all tickets
             const userId = State.currentUser.uid;
-            const allTickets = Object.values(State.tickets);
+            const allTickets = Object.values(State.tickets || {});
             const activeTicket = allTickets.find(t =>
                 t.userId === userId && (t.status === 'open' || t.status === 'in-progress')
             );
@@ -3396,7 +3398,7 @@
             `;
         }
 
-        function createTicket() {
+        async function createTicket() {
             // Check if logged in
             if (!State.isLoggedIn || !State.currentUserData || !State.currentUser) {
                 showToast('Войдите в аккаунт для создания тикета', true);
@@ -3404,53 +3406,74 @@
                 return;
             }
 
-            // Check for active ticket directly from all tickets
             const userId = State.currentUser.uid;
-            const allTickets = Object.values(State.tickets);
-            const activeTicket = allTickets.find(t =>
-                t.userId === userId && (t.status === 'open' || t.status === 'in-progress')
-            );
-
-            if (activeTicket) {
-                showToast('У вас уже есть активный тикет!', true);
-                renderTicketForm(); // Refresh form to show the active ticket
-                return;
-            }
-
             const author = State.currentUserData.username;
-            const gameMode = $('ticket-mode').value;
-            const message = $('ticket-message').value.trim();
+            const gameMode = $('ticket-mode')?.value;
+            const message = $('ticket-message')?.value?.trim();
 
             if (!message) {
                 showToast('Введите сообщение!', true);
                 return;
             }
 
-            const ticketId = generateTicketId();
-            const ticketData = {
-                id: ticketId,
-                author: author,
-                userId: userId,
-                gameMode: gameMode,
-                status: 'open',
-                createdAt: Date.now(),
-                updatedAt: Date.now(),
-                messages: [{
-                    id: 1,
-                    author: author,
-                    content: message,
-                    isAdmin: false,
-                    timestamp: Date.now()
-                }]
-            };
+            // Disable button while checking
+            const submitBtn = document.querySelector('#ticket-form-container .btn-primary');
+            if (submitBtn) {
+                submitBtn.disabled = true;
+                submitBtn.textContent = 'Проверка...';
+            }
 
-            set(ref(db, 'tickets/' + ticketId), ticketData)
-                .then(() => {
-                    showToast('Тикет создан! ID: ' + ticketId);
-                    $('ticket-message').value = '';
-                    // Form will update automatically via onValue listener
-                })
-                .catch(err => showToast('Ошибка: ' + err.message, true));
+            try {
+                // ВАЖНО: Проверяем лимит напрямую из Firebase (не из кэша!)
+                const ticketsSnapshot = await get(ref(db, 'tickets'));
+                const allTicketsData = ticketsSnapshot.val() || {};
+                const allTickets = Object.values(allTicketsData);
+
+                const activeTicket = allTickets.find(t =>
+                    t.userId === userId && (t.status === 'open' || t.status === 'in-progress')
+                );
+
+                if (activeTicket) {
+                    showToast('У вас уже есть активный тикет!', true);
+                    // Обновляем локальный кэш
+                    State.tickets = allTicketsData;
+                    renderTicketForm();
+                    renderUserTickets();
+                    return;
+                }
+
+                const ticketId = generateTicketId();
+                const ticketData = {
+                    id: ticketId,
+                    author: author,
+                    userId: userId,
+                    gameMode: gameMode,
+                    status: 'open',
+                    createdAt: Date.now(),
+                    updatedAt: Date.now(),
+                    messages: [{
+                        id: 1,
+                        author: author,
+                        content: message,
+                        isAdmin: false,
+                        timestamp: Date.now()
+                    }]
+                };
+
+                await set(ref(db, 'tickets/' + ticketId), ticketData);
+                showToast('Тикет создан! ID: ' + ticketId);
+                if ($('ticket-message')) $('ticket-message').value = '';
+                // Form will update automatically via onValue listener
+            } catch (err) {
+                console.error('Create ticket error:', err);
+                showToast('Ошибка: ' + err.message, true);
+            } finally {
+                // Re-enable button
+                if (submitBtn) {
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = 'Отправить тикет';
+                }
+            }
         }
 
         function filterTickets(filter) {
@@ -3465,11 +3488,30 @@
 
         function renderUserTickets() {
             const container = $('user-tickets-list');
+            if (!container) return;
+
+            // Проверяем авторизацию
+            if (!State.currentUser || !State.currentUser.uid) {
+                container.innerHTML = `
+                    <div class="empty-tickets">
+                        <p>🔒 Войдите в аккаунт</p>
+                        <small>Чтобы увидеть свои тикеты, необходимо авторизоваться</small>
+                    </div>
+                `;
+                // Reset counts
+                if ($('filter-count-all')) $('filter-count-all').textContent = '0';
+                if ($('filter-count-open')) $('filter-count-open').textContent = '0';
+                if ($('filter-count-progress')) $('filter-count-progress').textContent = '0';
+                if ($('filter-count-closed')) $('filter-count-closed').textContent = '0';
+                return;
+            }
 
             // Get user tickets directly from all tickets
-            const userId = State.currentUser?.uid;
-            const allTickets = Object.values(State.tickets);
-            let userTickets = userId ? allTickets.filter(t => t.userId === userId) : [];
+            const userId = State.currentUser.uid;
+            const allTickets = Object.values(State.tickets || {});
+
+            // Фильтруем тикеты текущего пользователя
+            let userTickets = allTickets.filter(t => t.userId === userId);
 
             // Update State.userTickets for consistency
             State.userTickets = userTickets;
@@ -3486,10 +3528,10 @@
             const progressCount = userTickets.filter(t => t.status === 'in-progress').length;
             const closedCount = userTickets.filter(t => t.status === 'closed').length;
 
-            $('filter-count-all').textContent = allCount;
-            $('filter-count-open').textContent = openCount;
-            $('filter-count-progress').textContent = progressCount;
-            $('filter-count-closed').textContent = closedCount;
+            if ($('filter-count-all')) $('filter-count-all').textContent = allCount;
+            if ($('filter-count-open')) $('filter-count-open').textContent = openCount;
+            if ($('filter-count-progress')) $('filter-count-progress').textContent = progressCount;
+            if ($('filter-count-closed')) $('filter-count-closed').textContent = closedCount;
 
             if (tickets.length === 0) {
                 container.innerHTML = `
@@ -4326,6 +4368,10 @@
                 updateNavUI(userCredential.user, userData);
                 renderProfile(userData);
 
+                // Обновляем отображение тикетов для нового пользователя
+                renderUserTickets();
+                renderTicketForm();
+
                 showToast('Аккаунт создан! Добро пожаловать, ' + username);
                 closeAuthModal();
 
@@ -4371,6 +4417,18 @@
                     // Update UI
                     updateNavUI(userCredential.user, userData);
                     renderProfile(userData);
+
+                    // ВАЖНО: Загружаем тикеты и обновляем отображение
+                    try {
+                        const ticketsSnapshot = await get(ref(db, 'tickets'));
+                        State.tickets = ticketsSnapshot.val() || {};
+                    } catch (err) {
+                        console.error('Error loading tickets on login:', err);
+                    }
+
+                    // Обновляем отображение тикетов
+                    renderUserTickets();
+                    renderTicketForm();
 
                     // Handle admin panel
                     if (State.isAdmin) {
@@ -4735,7 +4793,7 @@
         function init() {
             // Прогресс: начинаем загрузку данных
             if (window._updateLoadingProgress) window._updateLoadingProgress(85, 'Загрузка данных...');
-            
+
             // Listen to members
             const membersRef = ref(db, 'members');
             onValue(membersRef, (snapshot) => {
@@ -4819,9 +4877,24 @@
                             // Update profile section
                             renderProfile(userData);
 
-                            // Update tickets display (renderUserTickets will filter by user.uid)
-                            renderUserTickets();
-                            renderTicketForm();
+                            // ВАЖНО: Перезагружаем тикеты чтобы гарантировать актуальные данные
+                            get(ref(db, 'tickets')).then((ticketsSnapshot) => {
+                                const ticketsData = ticketsSnapshot.val() || {};
+                                State.tickets = ticketsData;
+
+                                // Теперь рендерим с актуальными данными
+                                renderUserTickets();
+                                renderTicketForm();
+
+                                if (State.isAdmin) {
+                                    renderAdminTickets();
+                                }
+                            }).catch((err) => {
+                                console.error('Error loading tickets:', err);
+                                // Рендерим с тем, что есть
+                                renderUserTickets();
+                                renderTicketForm();
+                            });
 
                             // Handle admin panel visibility
                             if (State.isAdmin) {
