@@ -3015,7 +3015,7 @@
 
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-app.js";
         import {
-            getDatabase, ref, set, onValue, remove, push, update, get
+            getDatabase, ref, set, onValue, remove, push, update, get, query, orderByChild, equalTo, off
         } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-database.js";
         import {
             getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged, createUserWithEmailAndPassword,
@@ -3424,19 +3424,21 @@
             }
 
             try {
-                // ВАЖНО: Проверяем лимит напрямую из Firebase (не из кэша!)
-                const ticketsSnapshot = await get(ref(db, 'tickets'));
-                const allTicketsData = ticketsSnapshot.val() || {};
-                const allTickets = Object.values(allTicketsData);
-
-                const activeTicket = allTickets.find(t =>
-                    t.userId === userId && (t.status === 'open' || t.status === 'in-progress')
+                // ВАЖНО: Используем query для получения только своих тикетов (соответствует правилам Firebase)
+                const userTicketsQuery = query(ref(db, 'tickets'), orderByChild('userId'), equalTo(userId));
+                const ticketsSnapshot = await get(userTicketsQuery);
+                const userTicketsData = ticketsSnapshot.val() || {};
+                const userTickets = Object.values(userTicketsData);
+                
+                // Проверяем есть ли активный тикет
+                const activeTicket = userTickets.find(t =>
+                    t.status === 'open' || t.status === 'in-progress'
                 );
 
                 if (activeTicket) {
                     showToast('У вас уже есть активный тикет!', true);
-                    // Обновляем локальный кэш
-                    State.tickets = allTicketsData;
+                    // Обновляем локальный кэш тикетов пользователя
+                    Object.assign(State.tickets, userTicketsData);
                     renderTicketForm();
                     renderUserTickets();
                     return;
@@ -3509,7 +3511,7 @@
             // Get user tickets directly from all tickets
             const userId = State.currentUser.uid;
             const allTickets = Object.values(State.tickets || {});
-
+            
             // Фильтруем тикеты текущего пользователя
             let userTickets = allTickets.filter(t => t.userId === userId);
 
@@ -4367,7 +4369,7 @@
 
                 updateNavUI(userCredential.user, userData);
                 renderProfile(userData);
-
+                
                 // Обновляем отображение тикетов для нового пользователя
                 renderUserTickets();
                 renderTicketForm();
@@ -4418,17 +4420,8 @@
                     updateNavUI(userCredential.user, userData);
                     renderProfile(userData);
 
-                    // ВАЖНО: Загружаем тикеты и обновляем отображение
-                    try {
-                        const ticketsSnapshot = await get(ref(db, 'tickets'));
-                        State.tickets = ticketsSnapshot.val() || {};
-                    } catch (err) {
-                        console.error('Error loading tickets on login:', err);
-                    }
-
-                    // Обновляем отображение тикетов
-                    renderUserTickets();
-                    renderTicketForm();
+                    // ВАЖНО: Устанавливаем listener для тикетов
+                    setupTicketsListener();
 
                     // Handle admin panel
                     if (State.isAdmin) {
@@ -4439,7 +4432,6 @@
                             renderAdminTable(State.allMembers);
                             updateAdminStats(State.allMembers);
                         }
-                        renderAdminTickets();
                     }
                 }
 
@@ -4788,6 +4780,64 @@
         }
 
         // ═══════════════════════════════════════════════════════════
+        // TICKETS LISTENER (динамическая подписка в зависимости от роли)
+        // ═══════════════════════════════════════════════════════════
+        let ticketsUnsubscribe = null;
+
+        function setupTicketsListener() {
+            // Отписываемся от предыдущего listener если есть
+            if (ticketsUnsubscribe) {
+                ticketsUnsubscribe();
+                ticketsUnsubscribe = null;
+            }
+
+            // Если пользователь не авторизован - просто очищаем тикеты
+            if (!State.currentUser) {
+                State.tickets = {};
+                renderUserTickets();
+                renderTicketForm();
+                return;
+            }
+
+            // Создаём правильный query в зависимости от роли
+            let ticketsQuery;
+            if (State.isAdmin) {
+                // Админ видит все тикеты
+                ticketsQuery = ref(db, 'tickets');
+            } else {
+                // Обычный пользователь видит только свои тикеты
+                ticketsQuery = query(ref(db, 'tickets'), orderByChild('userId'), equalTo(State.currentUser.uid));
+            }
+
+            // Подписываемся на обновления
+            ticketsUnsubscribe = onValue(ticketsQuery, (snapshot) => {
+                const data = snapshot.val() || {};
+                State.tickets = data;
+
+                // Рендерим тикеты
+                renderUserTickets();
+                renderTicketForm();
+
+                if (State.isAdmin) {
+                    renderAdminTickets();
+                }
+
+                // Обновляем детали текущего тикета если открыт
+                if (State.currentTicketId && State.tickets[State.currentTicketId]) {
+                    const currentTicket = State.tickets[State.currentTicketId];
+                    if (State.isAdmin || currentTicket.userId === State.currentUser?.uid) {
+                        renderTicketDetail(currentTicket);
+                    }
+                }
+            }, (error) => {
+                console.error('Tickets listener error:', error);
+                State.tickets = {};
+                renderUserTickets();
+                renderTicketForm();
+            });
+        }
+
+        // ═══════════════════════════════════════════════════════════
         // INITIALIZATION
         // ═══════════════════════════════════════════════════════════
         function init() {
@@ -4828,29 +4878,8 @@
                 showToast("Ошибка загрузки данных", true);
             });
 
-            // Listen to tickets
-            const ticketsRef = ref(db, 'tickets');
-            onValue(ticketsRef, (snapshot) => {
-                const data = snapshot.val() || {};
-                State.tickets = data;
-
-                // Render functions will filter tickets themselves
-                renderUserTickets();
-                renderTicketForm();
-
-                if (State.isAdmin) {
-                    renderAdminTickets();
-                }
-
-                // Update current ticket detail if open
-                if (State.currentTicketId && State.tickets[State.currentTicketId]) {
-                    const currentTicket = State.tickets[State.currentTicketId];
-                    // Проверяем доступ перед обновлением
-                    if (State.isAdmin || currentTicket.userId === State.currentUser?.uid) {
-                        renderTicketDetail(currentTicket);
-                    }
-                }
-            });
+            // Tickets listener будет установлен после авторизации через setupTicketsListener()
+            // Это необходимо потому что обычные пользователи могут читать только свои тикеты
 
             // Auth state listener
             onAuthStateChanged(auth, (user) => {
@@ -4877,24 +4906,8 @@
                             // Update profile section
                             renderProfile(userData);
 
-                            // ВАЖНО: Перезагружаем тикеты чтобы гарантировать актуальные данные
-                            get(ref(db, 'tickets')).then((ticketsSnapshot) => {
-                                const ticketsData = ticketsSnapshot.val() || {};
-                                State.tickets = ticketsData;
-
-                                // Теперь рендерим с актуальными данными
-                                renderUserTickets();
-                                renderTicketForm();
-
-                                if (State.isAdmin) {
-                                    renderAdminTickets();
-                                }
-                            }).catch((err) => {
-                                console.error('Error loading tickets:', err);
-                                // Рендерим с тем, что есть
-                                renderUserTickets();
-                                renderTicketForm();
-                            });
+                            // ВАЖНО: Устанавливаем listener для тикетов (зависит от роли)
+                            setupTicketsListener();
 
                             // Handle admin panel visibility
                             if (State.isAdmin) {
@@ -4905,8 +4918,6 @@
                                     renderAdminTable(State.allMembers);
                                     updateAdminStats(State.allMembers);
                                 }
-
-                                renderAdminTickets();
                             } else {
                                 $('admin-login').style.display = 'block';
                                 $('admin-dashboard').classList.remove('active');
@@ -4933,8 +4944,9 @@
                     State.userTickets = [];
 
                     updateNavUI(null, null);
-                    renderUserTickets();
-                    renderTicketForm();
+                    
+                    // Очищаем listener тикетов
+                    setupTicketsListener();
 
                     $('admin-login').style.display = 'block';
                     $('admin-dashboard').classList.remove('active');
