@@ -1,0 +1,9 @@
+{
+  "name": "llupat-clan",
+  "version": "1.0.0",
+  "description": "llUPAT DDNet Clan Website",
+  "private": true,
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

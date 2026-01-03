@@ -1,0 +1,5214 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>llUPAT | DDNet Клан</title>
+    <style>
+        /* Local fonts for Russia accessibility - no external dependencies */
+        @font-face {
+            font-family: 'Orbitron';
+            src: local('Orbitron'), local('Orbitron-Regular'),
+                 url('https://assets.codepen.io/13471/orbitron.woff2') format('woff2');
+            font-weight: 400;
+            font-display: swap;
+        }
+        @font-face {
+            font-family: 'Orbitron';
+            src: local('Orbitron'), local('Orbitron-Bold'),
+                 url('https://assets.codepen.io/13471/orbitron-bold.woff2') format('woff2');
+            font-weight: 700;
+            font-display: swap;
+        }
+        @font-face {
+            font-family: 'Rajdhani';
+            src: local('Rajdhani'), local('Rajdhani-Regular');
+            font-weight: 400;
+            font-display: swap;
+        }
+        @font-face {
+            font-family: 'Rajdhani';
+            src: local('Rajdhani'), local('Rajdhani-Medium');
+            font-weight: 500;
+            font-display: swap;
+        }
+        @font-face {
+            font-family: 'Rajdhani';
+            src: local('Rajdhani'), local('Rajdhani-Bold');
+            font-weight: 700;
+            font-display: swap;
+        }
+    </style>
+    <style>
+        /* ══════════════════════════════════════════════════════════════
+           CSS VARIABLES
+        ══════════════════════════════════════════════════════════════ */
+        :root {
+            --primary: #ff6b35;
+            --primary-dark: #e55a2b;
+            --secondary: #00b4d8;
+            --accent: #7209b7;
+            --success: #06d6a0;
+            --warning: #ffd166;
+            --danger: #ef476f;
+            --bg-dark: #0d1117;
+            --bg-card: #161b22;
+            --bg-elevated: #21262d;
+            --text: #f0f6fc;
+            --text-muted: #8b949e;
+            --border: #30363d;
+            --block-color: #ef476f;
+            --kog-color: #7209b7;
+            --race-color: #ffd166;
+            --fng-color: #06d6a0;
+        }
+
+        /* ══════════════════════════════════════════════════════════════
+           RESET & BASE
+        ══════════════════════════════════════════════════════════════ */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Rajdhani', sans-serif;
+            background: var(--bg-dark);
+            color: var(--text);
+            min-height: 100vh;
+            overflow-x: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* ══════════════════════════════════════════════════════════════
+           ANIMATED BACKGROUND
+        ══════════════════════════════════════════════════════════════ */
+        .bg-pattern {
+            position: fixed;
+            inset: 0;
+            background:
+                radial-gradient(circle at 10% 20%, rgba(255, 107, 53, 0.08) 0%, transparent 40%),
+                radial-gradient(circle at 90% 80%, rgba(0, 180, 216, 0.08) 0%, transparent 40%),
+                radial-gradient(circle at 50% 50%, rgba(114, 9, 183, 0.05) 0%, transparent 60%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .bg-grid {
+            position: fixed;
+            inset: 0;
+            background-image:
+                linear-gradient(rgba(255, 107, 53, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255, 107, 53, 0.03) 1px, transparent 1px);
+            background-size: 60px 60px;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        /* ══════════════════════════════════════════════════════════════
+           NAVIGATION
+        ══════════════════════════════════════════════════════════════ */
+        nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(13, 17, 23, 0.95);
+            backdrop-filter: blur(15px);
+            border-bottom: 1px solid var(--border);
+            z-index: 1000;
+        }
+
+        .logo {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.8rem;
+            font-weight: 900;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: 4px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .logo:hover {
+            transform: scale(1.05);
+            filter: brightness(1.2);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+            align-items: center;
+        }
+
+        .nav-links a {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 1rem;
+            font-weight: 500;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            transition: all 0.3s ease;
+            position: relative;
+            padding: 0.5rem 0;
+            cursor: pointer;
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            transition: width 0.3s ease;
+        }
+
+        .nav-links a:hover,
+        .nav-links a.active {
+            color: var(--text);
+        }
+
+        .nav-links a:hover::after,
+        .nav-links a.active::after {
+            width: 100%;
+        }
+
+        .nav-links .admin-link {
+            color: var(--danger);
+            font-size: 0.85rem;
+        }
+
+        .nav-links .tickets-link {
+            color: var(--warning);
+            font-size: 0.85rem;
+        }
+
+        /* ══════════════════════════════════════════════════════════════
+           MAIN CONTENT
+        ══════════════════════════════════════════════════════════════ */
+        main {
+            position: relative;
+            z-index: 1;
+            padding-top: 80px;
+            flex: 1;
+        }
+
+        section {
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+
+        section.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        /* ══════════════════════════════════════════════════════════════
+           HERO SECTION
+        ══════════════════════════════════════════════════════════════ */
+        .hero {
+            min-height: 70vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 2rem;
+        }
+
+        .hero-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: clamp(3.5rem, 10vw, 8rem);
+            font-weight: 900;
+            background: linear-gradient(135deg, var(--primary), var(--secondary), var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: 10px;
+            animation: glow 3s ease-in-out infinite;
+            margin-bottom: 1rem;
+        }
+
+        @keyframes glow {
+
+            0%,
+            100% {
+                filter: drop-shadow(0 0 20px rgba(255, 107, 53, 0.5));
+            }
+
+            50% {
+                filter: drop-shadow(0 0 40px rgba(0, 180, 216, 0.5));
+            }
+        }
+
+        .hero-subtitle {
+            font-size: 1.4rem;
+            color: var(--text-muted);
+            letter-spacing: 6px;
+            text-transform: uppercase;
+            margin-bottom: 2rem;
+        }
+
+        .hero-stats {
+            display: flex;
+            gap: 4rem;
+            margin-top: 2rem;
+        }
+
+        .stat {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--secondary), var(--success));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .stat-label {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .cta-button {
+            margin-top: 2.5rem;
+            padding: 1rem 2.5rem;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--text);
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            border: none;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            transition: all 0.3s ease;
+            border-radius: 4px;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .cta-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(255, 107, 53, 0.4);
+        }
+
+        /* ══════════════════════════════════════════════════════════════
+           REQUIREMENTS
+        ══════════════════════════════════════════════════════════════ */
+        .requirements-block {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            flex-wrap: wrap;
+            max-width: 1200px;
+            margin: 0 auto 3rem;
+        }
+
+        .requirement-item {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 1rem 1.5rem;
+            font-size: 1.1rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .requirement-item:hover {
+            border-color: var(--primary);
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(255, 107, 53, 0.2);
+        }
+
+        /* ══════════════════════════════════════════════════════════════
+           SECTION TITLE
+        ══════════════════════════════════════════════════════════════ */
+        .section-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2.2rem;
+            text-align: center;
+            margin-bottom: 3rem;
+            letter-spacing: 4px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        /* ══════════════════════════════════════════════════════════════
+           MODE CARDS
+        ══════════════════════════════════════════════════════════════ */
+        .modes-section {
+            padding: 4rem 2rem;
+            background: linear-gradient(180deg, transparent, rgba(22, 27, 34, 0.8));
+        }
+
+        .modes-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 2rem;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .mode-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            overflow: hidden;
+            transition: all 0.4s ease;
+            position: relative;
+        }
+
+        .mode-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            transform: scaleX(0);
+            transition: transform 0.4s ease;
+        }
+
+        .mode-card:hover {
+            transform: translateY(-10px);
+            border-color: var(--primary);
+            box-shadow: 0 20px 40px rgba(255, 107, 53, 0.2);
+        }
+
+        .mode-card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .mode-image {
+            width: 100%;
+            height: 180px;
+            background: var(--bg-elevated);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 4rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .mode-image::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 50%;
+            background: linear-gradient(transparent, var(--bg-card));
+        }
+
+        .mode-icon {
+            font-size: 4rem;
+            z-index: 1;
+        }
+
+        .mode-content {
+            padding: 1.5rem;
+        }
+
+        .mode-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.4rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .mode-description {
+            font-size: 0.95rem;
+            color: var(--text-muted);
+            line-height: 1.6;
+        }
+
+        .mode-description strong {
+            color: var(--text);
+        }
+
+        /* ══════════════════════════════════════════════════════════════
+           FILTER TABS
+        ══════════════════════════════════════════════════════════════ */
+        .filter-tabs {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .filter-tab {
+            padding: 0.7rem 1.5rem;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .filter-tab:hover {
+            border-color: var(--primary);
+            color: var(--text);
+        }
+
+        .filter-tab.active {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            border-color: var(--primary);
+            color: var(--text);
+        }
+
+        .filter-tab.block-tab.active {
+            background: var(--block-color);
+            border-color: var(--block-color);
+        }
+
+        .filter-tab.kog-tab.active {
+            background: var(--kog-color);
+            border-color: var(--kog-color);
+        }
+
+        .filter-tab.race-tab.active {
+            background: var(--race-color);
+            border-color: var(--race-color);
+            color: var(--bg-dark);
+        }
+
+        .filter-tab.fng-tab.active {
+            background: var(--fng-color);
+            border-color: var(--fng-color);
+            color: var(--bg-dark);
+        }
+
+        /* ══════════════════════════════════════════════════════════════
+           MEMBERS GRID
+        ══════════════════════════════════════════════════════════════ */
+        .members-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .member-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1.2rem 1.5rem;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .member-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--primary);
+            box-shadow: 0 15px 30px rgba(255, 107, 53, 0.15);
+        }
+
+        .member-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.3rem;
+            font-weight: 700;
+            flex-shrink: 0;
+            overflow: hidden;
+        }
+
+        .member-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .member-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .member-name {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 0.3rem;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .member-badges {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .game-mode-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.3rem;
+            padding: 0.2rem 0.6rem;
+            font-size: 0.7rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border-radius: 4px;
+        }
+
+        .game-mode-badge.block {
+            background: rgba(239, 71, 111, 0.2);
+            color: var(--block-color);
+            border: 1px solid var(--block-color);
+        }
+
+        .game-mode-badge.kog {
+            background: rgba(114, 9, 183, 0.2);
+            color: var(--kog-color);
+            border: 1px solid var(--kog-color);
+        }
+
+        .game-mode-badge.race {
+            background: rgba(255, 209, 102, 0.2);
+            color: var(--race-color);
+            border: 1px solid var(--race-color);
+        }
+
+        .game-mode-badge.fng {
+            background: rgba(6, 214, 160, 0.2);
+            color: var(--fng-color);
+            border: 1px solid var(--fng-color);
+        }
+
+        .best-role {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.3rem;
+            padding: 0.2rem 0.6rem;
+            font-size: 0.7rem;
+            font-weight: 600;
+            background: rgba(0, 180, 216, 0.15);
+            color: var(--secondary);
+            border: 1px solid var(--secondary);
+            border-radius: 4px;
+        }
+
+        .birthday-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.2rem;
+            padding: 0.15rem 0.5rem;
+            font-size: 0.65rem;
+            background: rgba(255, 107, 53, 0.2);
+            color: var(--primary);
+            border: 1px solid var(--primary);
+            border-radius: 4px;
+        }
+
+        /* ══════════════════════════════════════════════════════════════
+           UPDATE INFO & MODE COUNTS
+        ══════════════════════════════════════════════════════════════ */
+        .update-info {
+            text-align: center;
+            margin-bottom: 1.5rem;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        .update-info .time {
+            color: var(--secondary);
+        }
+
+        .mode-counts {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .mode-count-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+
+        .mode-count-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+
+        .mode-count-dot.block {
+            background: var(--block-color);
+        }
+
+        .mode-count-dot.kog {
+            background: var(--kog-color);
+        }
+
+        .mode-count-dot.race {
+            background: var(--race-color);
+        }
+
+        .mode-count-dot.fng {
+            background: var(--fng-color);
+        }
+
+        /* ══════════════════════════════════════════════════════════════
+           LOADING & ERROR
+        ══════════════════════════════════════════════════════════════ */
+        .loading {
+            text-align: center;
+            padding: 4rem 2rem;
+            color: var(--text-muted);
+        }
+
+        .loading-spinner {
+            width: 50px;
+            height: 50px;
+            border: 3px solid var(--border);
+            border-top-color: var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 1rem;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .error-message {
+            text-align: center;
+            padding: 2rem;
+            color: var(--danger);
+            background: rgba(239, 71, 111, 0.1);
+            border: 1px solid var(--danger);
+            border-radius: 8px;
+            margin: 2rem 0;
+        }
+
+        /* ══════════════════════════════════════════════════════════════
+           TOAST
+        ══════════════════════════════════════════════════════════════ */
+        .toast {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            padding: 1rem 2rem;
+            background: var(--bg-card);
+            border: 1px solid var(--success);
+            border-radius: 8px;
+            color: var(--text);
+            font-size: 0.95rem;
+            z-index: 3000;
+            transform: translateX(150%);
+            transition: transform 0.3s ease;
+        }
+
+        .toast.show {
+            transform: translateX(0);
+        }
+
+        .toast.error {
+            border-color: var(--danger);
+        }
+
+        /* ══════════════════════════════════════════════════════════════
+           FOOTER
+        ══════════════════════════════════════════════════════════════ */
+        .footer {
+            position: relative;
+            z-index: 1;
+            background: var(--bg-card);
+            border-top: 1px solid var(--border);
+            padding: 2rem;
+            text-align: center;
+            margin-top: auto;
+        }
+
+        .footer-content p {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .credit-name {
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        /* ══════════════════════════════════════════════════════════════
+           ADMIN SECTION
+        ══════════════════════════════════════════════════════════════ */
+        #admin {
+            padding-bottom: 4rem;
+        }
+
+        .admin-login {
+            max-width: 450px;
+            margin: 4rem auto;
+            padding: 2rem;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            text-align: center;
+        }
+
+        .admin-login h2 {
+            font-family: 'Orbitron', sans-serif;
+            margin-bottom: 1.5rem;
+            color: var(--danger);
+        }
+
+        /* ══════════════════════════════════════════════════════════════
+           AUTH SYSTEM STYLES
+        ══════════════════════════════════════════════════════════════ */
+        .auth-modal {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(10px);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .auth-modal.open {
+            opacity: 1;
+        }
+
+        .auth-modal-content {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 2.5rem;
+            width: 90%;
+            max-width: 420px;
+            transform: scale(0.9);
+            transition: transform 0.3s ease;
+        }
+
+        .auth-modal.open .auth-modal-content {
+            transform: scale(1);
+        }
+
+        .auth-modal-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .auth-modal-header h2 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.8rem;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.5rem;
+        }
+
+        .auth-modal-header p {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+        }
+
+        .auth-tabs {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+            background: var(--bg-elevated);
+            padding: 0.3rem;
+            border-radius: 10px;
+        }
+
+        .auth-tab {
+            flex: 1;
+            padding: 0.8rem;
+            border: none;
+            background: transparent;
+            color: var(--text-muted);
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .auth-tab.active {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+        }
+
+        .auth-tab:hover:not(.active) {
+            color: var(--text);
+        }
+
+        .auth-form {
+            display: none;
+        }
+
+        .auth-form.active {
+            display: block;
+        }
+
+        .auth-input-group {
+            margin-bottom: 1rem;
+        }
+
+        .auth-input-group label {
+            display: block;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .auth-input-group input {
+            width: 100%;
+            padding: 0.9rem 1rem;
+            background: var(--bg-elevated);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--text);
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .auth-input-group input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(255, 107, 53, 0.2);
+        }
+
+        .auth-btn {
+            width: 100%;
+            padding: 1rem;
+            border: none;
+            border-radius: 10px;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 1rem;
+        }
+
+        .auth-btn-primary {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+        }
+
+        .auth-btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(255, 107, 53, 0.4);
+        }
+
+        .auth-error {
+            color: var(--danger);
+            font-size: 0.9rem;
+            margin-top: 1rem;
+            text-align: center;
+        }
+
+        .auth-close {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: color 0.3s ease;
+        }
+
+        .auth-close:hover {
+            color: var(--text);
+        }
+
+        /* User Profile in Nav */
+        .nav-user {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            padding: 0.5rem 1rem;
+            background: var(--bg-elevated);
+            border-radius: 25px;
+            border: 1px solid var(--border);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .nav-user:hover {
+            border-color: var(--primary);
+        }
+
+        .nav-user-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 0.9rem;
+        }
+
+        .nav-user-info {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .nav-user-name {
+            font-weight: 600;
+            font-size: 0.9rem;
+            color: var(--text);
+        }
+
+        .nav-user-role {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+
+        .nav-user-role.admin {
+            color: var(--danger);
+        }
+
+        .nav-auth-btn {
+            padding: 0.6rem 1.2rem;
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            border: none;
+            border-radius: 20px;
+            color: white;
+            font-family: 'Rajdhani', sans-serif;
+            font-weight: 600;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .nav-auth-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(255, 107, 53, 0.3);
+        }
+
+        /* User Dropdown */
+        .nav-user-wrapper {
+            position: relative;
+        }
+
+        .user-dropdown {
+            display: none;
+            position: absolute;
+            top: calc(100% + 10px);
+            right: 0;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            min-width: 200px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            z-index: 1001;
+            overflow: hidden;
+        }
+
+        .user-dropdown.show {
+            display: block;
+            animation: dropdownFade 0.2s ease;
+        }
+
+        @keyframes dropdownFade {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .dropdown-item {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            padding: 0.9rem 1.2rem;
+            color: var(--text);
+            text-decoration: none;
+            cursor: pointer;
+            transition: background 0.2s ease;
+            font-size: 0.95rem;
+        }
+
+        .dropdown-item:hover {
+            background: var(--bg-elevated);
+        }
+
+        .dropdown-item.danger {
+            color: var(--danger);
+        }
+
+        .dropdown-divider {
+            height: 1px;
+            background: var(--border);
+            margin: 0.3rem 0;
+        }
+
+        /* Admin Badge */
+        .admin-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.3rem;
+            padding: 0.2rem 0.6rem;
+            background: rgba(239, 71, 111, 0.2);
+            border: 1px solid var(--danger);
+            border-radius: 4px;
+            color: var(--danger);
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        /* Users Management Section */
+        .users-management {
+            margin-top: 2rem;
+        }
+
+        .user-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 1rem;
+            background: var(--bg-elevated);
+            border-radius: 8px;
+            margin-bottom: 0.5rem;
+        }
+
+        .user-row-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .user-row-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+        }
+
+        .user-row-name {
+            font-weight: 600;
+        }
+
+        .user-row-email {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        .role-select {
+            padding: 0.5rem 1rem;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            color: var(--text);
+            font-size: 0.9rem;
+            cursor: pointer;
+        }
+
+        .role-select:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        .admin-dashboard {
+            display: none;
+        }
+
+        .admin-dashboard.active {
+            display: block;
+        }
+
+        .admin-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .admin-header h2 {
+            font-family: 'Orbitron', sans-serif;
+            background: linear-gradient(135deg, var(--danger), var(--primary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .admin-grid {
+            display: grid;
+            grid-template-columns: 380px 1fr;
+            gap: 2rem;
+        }
+
+        /* ══════════════════════════════════════════════════════════════
+           ADMIN FORMS
+        ══════════════════════════════════════════════════════════════ */
+        .card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            padding: 1.5rem;
+            border-radius: 12px;
+            margin-bottom: 1.5rem;
+        }
+
+        .card-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.1rem;
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 1px solid var(--border);
+            color: var(--primary);
+            text-align: center;
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: var(--secondary);
+            font-size: 0.9rem;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 0.8rem;
+            background: var(--bg-dark);
+            border: 1px solid var(--border);
+            color: var(--text);
+            border-radius: 6px;
+            font-family: inherit;
+            font-size: 1rem;
+            transition: 0.3s;
+        }
+
+        .form-group textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            border-color: var(--primary);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(255, 107, 53, 0.1);
+        }
+
+        .form-group small {
+            color: var(--text-muted);
+            font-size: 0.75rem;
+        }
+
+        .form-row {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .checkbox-label {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            cursor: pointer;
+            font-weight: 500;
+        }
+
+        .checkbox-label input {
+            width: auto !important;
+            accent-color: var(--primary);
+        }
+
+        /* Mode checkboxes */
+        .mode-checkbox {
+            transition: all 0.2s ease;
+        }
+
+        .mode-checkbox:has(input:checked) {
+            transform: scale(1.05);
+            box-shadow: 0 0 15px currentColor;
+        }
+
+        .mode-checkbox:hover {
+            transform: scale(1.02);
+        }
+
+        /* ══════════════════════════════════════════════════════════════
+           AVATAR PREVIEW
+        ══════════════════════════════════════════════════════════════ */
+        .avatar-preview {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            margin: 0 auto 1.5rem;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            border: 3px solid var(--border);
+            transition: 0.3s;
+            font-size: 2rem;
+            font-weight: 700;
+            font-family: 'Orbitron', sans-serif;
+            color: white;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .avatar-preview img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .avatar-preview.loading {
+            border-color: var(--warning);
+        }
+
+        .avatar-preview.success {
+            border-color: var(--success);
+        }
+
+        .avatar-preview.error {
+            border-color: var(--danger);
+        }
+
+        /* ══════════════════════════════════════════════════════════════
+           BUTTONS
+        ══════════════════════════════════════════════════════════════ */
+        .btn {
+            padding: 0.8rem 1.5rem;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 700;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            width: 100%;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(255, 107, 53, 0.4);
+        }
+
+        .btn-secondary {
+            background: var(--border);
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #444;
+        }
+
+        .btn-danger {
+            background: var(--danger);
+            color: white;
+            padding: 0.5rem 0.8rem;
+        }
+
+        .btn-edit {
+            background: var(--secondary);
+            color: white;
+            padding: 0.5rem 0.8rem;
+            margin-right: 5px;
+        }
+
+        .btn-logout {
+            background: var(--border);
+            color: var(--text);
+            padding: 0.6rem 1.2rem;
+        }
+
+        .btn-success {
+            background: var(--success);
+            color: var(--bg-dark);
+            padding: 0.5rem 0.8rem;
+        }
+
+        .btn-warning {
+            background: var(--warning);
+            color: var(--bg-dark);
+            padding: 0.5rem 0.8rem;
+        }
+
+        /* ══════════════════════════════════════════════════════════════
+           ADMIN TABLE
+        ══════════════════════════════════════════════════════════════ */
+        .admin-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .admin-table th {
+            text-align: left;
+            padding: 1rem;
+            border-bottom: 2px solid var(--border);
+            color: var(--secondary);
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.85rem;
+        }
+
+        .admin-table td {
+            padding: 1rem;
+            border-bottom: 1px solid var(--border);
+            vertical-align: middle;
+        }
+
+        .admin-table tr:hover {
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        .member-row-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .member-row-info img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 1px solid var(--border);
+        }
+
+        .member-row-name {
+            font-weight: 700;
+        }
+
+        .member-row-id {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+
+        .role-badge {
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            border: 1px solid currentColor;
+            display: inline-block;
+        }
+
+        /* ══════════════════════════════════════════════════════════════
+           ADMIN STATS
+        ══════════════════════════════════════════════════════════════ */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .stat-card {
+            background: var(--bg-elevated);
+            border-radius: 8px;
+            padding: 1rem;
+            text-align: center;
+        }
+
+        .stat-card .value {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.8rem;
+            font-weight: 700;
+        }
+
+        .stat-card .label {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+        }
+
+        .stat-card.total .value {
+            color: var(--text);
+        }
+
+        .stat-card.block .value {
+            color: var(--block-color);
+        }
+
+        .stat-card.kog .value {
+            color: var(--kog-color);
+        }
+
+        .stat-card.race .value {
+            color: var(--race-color);
+        }
+
+        .stat-card.fng .value {
+            color: var(--fng-color);
+        }
+
+        /* ══════════════════════════════════════════════════════════════
+           MODAL
+        ══════════════════════════════════════════════════════════════ */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.9);
+            backdrop-filter: blur(8px);
+            z-index: 2000;
+            display: none;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .modal-overlay.open {
+            display: flex;
+            opacity: 1;
+        }
+
+        .modal-window {
+            background: var(--bg-card);
+            width: 90%;
+            max-width: 600px;
+            border-radius: 12px;
+            border: 1px solid var(--secondary);
+            box-shadow: 0 0 60px rgba(0, 180, 216, 0.3);
+            padding: 2rem;
+            transform: translateY(20px);
+            transition: transform 0.3s ease;
+            position: relative;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .modal-overlay.open .modal-window {
+            transform: translateY(0);
+        }
+
+        .modal-header {
+            text-align: center;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .modal-header h2 {
+            font-family: 'Orbitron', sans-serif;
+            color: var(--secondary);
+            margin: 0;
+        }
+
+        .modal-actions {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        .close-modal {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            font-size: 2rem;
+            cursor: pointer;
+            line-height: 1;
+            transition: color 0.3s;
+        }
+
+        .close-modal:hover {
+            color: var(--danger);
+        }
+
+        /* ══════════════════════════════════════════════════════════════
+           SEARCH
+        ══════════════════════════════════════════════════════════════ */
+        .search-box {
+            margin-bottom: 1.5rem;
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 1rem;
+            background: var(--bg-dark);
+            border: 1px solid var(--border);
+            color: var(--text);
+            border-radius: 8px;
+            font-size: 1rem;
+        }
+
+        .search-box input:focus {
+            border-color: var(--primary);
+            outline: none;
+        }
+
+        /* ══════════════════════════════════════════════════════════════
+           TICKETS SECTION
+        ══════════════════════════════════════════════════════════════ */
+        .tickets-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .ticket-create-form {
+            max-width: 600px;
+            margin: 0 auto 3rem;
+        }
+
+        .tickets-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .ticket-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1.5rem;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .ticket-card:hover {
+            border-color: var(--secondary);
+            transform: translateX(5px);
+        }
+
+        .ticket-card.open {
+            border-left: 4px solid var(--success);
+        }
+
+        .ticket-card.in-progress {
+            border-left: 4px solid var(--warning);
+        }
+
+        .ticket-card.closed {
+            border-left: 4px solid var(--danger);
+            opacity: 0.7;
+        }
+
+        .ticket-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 0.75rem;
+        }
+
+        .ticket-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--text);
+        }
+
+        .ticket-id {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            font-family: monospace;
+        }
+
+        .ticket-status {
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .ticket-status.open {
+            background: rgba(6, 214, 160, 0.2);
+            color: var(--success);
+            border: 1px solid var(--success);
+        }
+
+        .ticket-status.in-progress {
+            background: rgba(255, 209, 102, 0.2);
+            color: var(--warning);
+            border: 1px solid var(--warning);
+        }
+
+        .ticket-status.closed {
+            background: rgba(239, 71, 111, 0.2);
+            color: var(--danger);
+            border: 1px solid var(--danger);
+        }
+
+        .ticket-meta {
+            display: flex;
+            gap: 1.5rem;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-top: 0.5rem;
+        }
+
+        .ticket-meta span {
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+        }
+
+        .ticket-preview {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            margin-top: 0.5rem;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        /* Ticket Detail View */
+        .ticket-detail {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 2rem;
+        }
+
+        .ticket-detail-header {
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .ticket-detail-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .ticket-detail-info {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1.5rem;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+
+        .ticket-messages {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            max-height: 500px;
+            overflow-y: auto;
+            padding-right: 0.5rem;
+        }
+
+        .ticket-message {
+            padding: 1rem;
+            border-radius: 8px;
+            max-width: 80%;
+        }
+
+        .ticket-message.user {
+            background: var(--bg-elevated);
+            margin-right: auto;
+            border-left: 3px solid var(--secondary);
+        }
+
+        .ticket-message.admin {
+            background: rgba(255, 107, 53, 0.1);
+            margin-left: auto;
+            border-right: 3px solid var(--primary);
+        }
+
+        .message-author {
+            font-weight: 700;
+            font-size: 0.85rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .message-author.admin-author {
+            color: var(--primary);
+        }
+
+        .message-author.user-author {
+            color: var(--secondary);
+        }
+
+        .message-content {
+            font-size: 0.95rem;
+            line-height: 1.6;
+            white-space: pre-wrap;
+        }
+
+        .message-time {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            margin-top: 0.5rem;
+        }
+
+        .ticket-reply-form {
+            border-top: 1px solid var(--border);
+            padding-top: 1.5rem;
+        }
+
+        .ticket-actions {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1rem;
+            flex-wrap: wrap;
+        }
+
+        /* Ticket Filter Tabs */
+        .ticket-filter-tabs {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .ticket-filter-tab {
+            padding: 0.6rem 1.2rem;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--text-muted);
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .ticket-filter-tab:hover {
+            border-color: var(--secondary);
+            color: var(--text);
+        }
+
+        .ticket-filter-tab.active {
+            background: var(--secondary);
+            border-color: var(--secondary);
+            color: var(--bg-dark);
+        }
+
+        .ticket-filter-tab .count {
+            background: var(--bg-elevated);
+            padding: 0.1rem 0.5rem;
+            border-radius: 10px;
+            font-size: 0.75rem;
+            margin-left: 0.5rem;
+        }
+
+        .ticket-filter-tab.active .count {
+            background: rgba(0, 0, 0, 0.2);
+        }
+
+        .ticket-stats {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .ticket-stat-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1rem;
+            text-align: center;
+        }
+
+        .ticket-stat-card .value {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2rem;
+            font-weight: 700;
+        }
+
+        .ticket-stat-card .label {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        .ticket-stat-card.open .value {
+            color: var(--success);
+        }
+
+        .ticket-stat-card.in-progress .value {
+            color: var(--warning);
+        }
+
+        .ticket-stat-card.closed .value {
+            color: var(--danger);
+        }
+
+        .empty-tickets {
+            text-align: center;
+            padding: 4rem 2rem;
+            color: var(--text-muted);
+        }
+
+        .empty-tickets p {
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+        }
+
+        .back-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.6rem 1rem;
+            background: var(--bg-elevated);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            color: var(--text);
+            cursor: pointer;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .back-btn:hover {
+            border-color: var(--secondary);
+            color: var(--secondary);
+        }
+
+        /* ══════════════════════════════════════════════════════════════
+           SCROLLBAR
+        ══════════════════════════════════════════════════════════════ */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--bg-dark);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--border);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--primary);
+        }
+
+        /* ══════════════════════════════════════════════════════════════
+           RESPONSIVE
+        ══════════════════════════════════════════════════════════════ */
+        @media (max-width: 1200px) {
+            .modes-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .admin-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .stats-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+
+            .ticket-stats {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+
+            .modes-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .hero-stats {
+                flex-direction: column;
+                gap: 1.5rem;
+            }
+
+            .members-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .filter-tabs {
+                gap: 0.5rem;
+                flex-wrap: wrap;
+            }
+
+            .filter-tab {
+                padding: 0.5rem 1rem;
+                font-size: 0.8rem;
+            }
+
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .ticket-stats {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .ticket-message {
+                max-width: 95%;
+            }
+
+            .modal-window {
+                padding: 1.5rem;
+                max-height: 85vh;
+                margin: 1rem;
+            }
+
+            .modal-actions {
+                grid-template-columns: 1fr;
+            }
+
+            .auth-modal-content {
+                padding: 1.5rem;
+                margin: 1rem;
+            }
+
+            .ticket-actions {
+                flex-direction: column;
+            }
+
+            .ticket-actions .btn {
+                width: 100%;
+            }
+
+            .admin-table-wrapper {
+                overflow-x: auto;
+            }
+
+            .admin-nav {
+                flex-wrap: wrap;
+                gap: 0.5rem;
+            }
+
+            .admin-nav-btn {
+                flex: 1;
+                min-width: 80px;
+                padding: 0.5rem;
+                font-size: 0.85rem;
+            }
+
+            main {
+                padding-bottom: 80px;
+            }
+
+            .container {
+                padding: 1rem;
+            }
+
+            .hero {
+                padding: 1rem;
+                min-height: 50vh;
+            }
+
+            .hero-title {
+                font-size: clamp(2.5rem, 12vw, 4rem);
+            }
+
+            .section-title {
+                font-size: 1.5rem;
+            }
+
+            .card {
+                padding: 1rem;
+            }
+
+            .requirements-block {
+                flex-direction: column;
+                gap: 1rem;
+            }
+        }
+
+        /* Mobile Nav */
+        .mobile-nav {
+            display: none;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background: var(--bg-card);
+            border-top: 1px solid var(--border);
+            padding: 0.3rem;
+            z-index: 1000;
+        }
+
+        @media (max-width: 768px) {
+            .mobile-nav {
+                display: flex;
+                justify-content: space-around;
+            }
+
+            .footer {
+                margin-bottom: 70px;
+            }
+        }
+
+        .mobile-nav-btn {
+            flex: 1;
+            padding: 0.5rem 0.25rem;
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            font-size: 0.65rem;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.15rem;
+            white-space: nowrap;
+        }
+
+        .mobile-nav-btn.active {
+            color: var(--primary);
+        }
+
+        .mobile-nav-btn span {
+            font-size: 1.1rem;
+        }
+    </style>
+
+    <!-- Vercel Analytics -->
+    <script defer src="/_vercel/insights/script.js"></script>
+</head>
+
+<body>
+    <!-- APP LOADING OVERLAY - показывается пока JS модуль загружается -->
+    <div id="app-loading-overlay" style="
+        position: fixed;
+        inset: 0;
+        background: #0d1117;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        z-index: 10000;
+        transition: opacity 0.3s ease;
+    ">
+        <div style="
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2rem;
+            font-weight: 900;
+            background: linear-gradient(135deg, #ff6b35, #00b4d8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: 4px;
+            margin-bottom: 2rem;
+        ">llUPAT</div>
+
+        <!-- Progress bar -->
+        <div style="
+            width: 200px;
+            height: 4px;
+            background: rgba(255, 107, 53, 0.2);
+            border-radius: 2px;
+            overflow: hidden;
+            margin-bottom: 1rem;
+        ">
+            <div id="app-loading-progress" style="
+                width: 0%;
+                height: 100%;
+                background: linear-gradient(90deg, #ff6b35, #00b4d8);
+                border-radius: 2px;
+                transition: width 0.3s ease;
+            "></div>
+        </div>
+
+        <!-- Status text -->
+        <div id="app-loading-status" style="
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 0.9rem;
+            color: #8b949e;
+            letter-spacing: 1px;
+        ">Загрузка модулей...</div>
+
+        <!-- VPN Warning (скрыт по умолчанию) -->
+        <div id="app-loading-warning" style="
+            display: none;
+            margin-top: 2rem;
+            padding: 1rem 1.5rem;
+            background: rgba(239, 71, 111, 0.1);
+            border: 1px solid rgba(239, 71, 111, 0.3);
+            border-radius: 8px;
+            max-width: 320px;
+            text-align: center;
+        ">
+            <div style="color: #ef476f; font-weight: 600; margin-bottom: 0.5rem;">
+                ⚠️ Долгая загрузка
+            </div>
+            <div style="color: #8b949e; font-size: 0.85rem; line-height: 1.5;">
+                Firebase может быть недоступен в вашем регионе.
+                Попробуйте использовать <span style="color: #00b4d8;">VPN</span>
+            </div>
+            <button onclick="location.reload()" style="
+                margin-top: 1rem;
+                padding: 0.5rem 1.5rem;
+                background: linear-gradient(135deg, #ff6b35, #e55a2b);
+                border: none;
+                border-radius: 6px;
+                color: white;
+                font-family: 'Rajdhani', sans-serif;
+                font-weight: 600;
+                cursor: pointer;
+            ">🔄 Попробовать снова</button>
+        </div>
+
+        <style>
+            @keyframes app-loader-spin {
+                to {
+                    transform: rotate(360deg);
+                }
+            }
+        </style>
+    </div>
+
+    <!-- Плейсхолдер для App до загрузки модуля -->
+    <script>
+        // Создаём очередь вызовов пока модуль загружается
+        window._appQueue = [];
+        window._appReady = false;
+
+        // Функция обновления прогресса загрузки
+        window._updateLoadingProgress = function (percent, status) {
+            var progressBar = document.getElementById('app-loading-progress');
+            var statusText = document.getElementById('app-loading-status');
+            if (progressBar) progressBar.style.width = percent + '%';
+            if (statusText) statusText.textContent = status;
+        };
+
+        // Начальный прогресс
+        setTimeout(function () {
+            window._updateLoadingProgress(10, 'Загрузка Firebase...');
+        }, 100);
+
+        // Таймаут - показываем предупреждение через 10 секунд
+        window._loadingTimeout = setTimeout(function () {
+            var warning = document.getElementById('app-loading-warning');
+            if (warning && !window._appReady) {
+                warning.style.display = 'block';
+                var statusText = document.getElementById('app-loading-status');
+                if (statusText) statusText.textContent = 'Подключение к серверу...';
+            }
+        }, 10000);
+
+        // Создаём Proxy для App который либо вызывает функцию, либо добавляет в очередь
+        window.App = new Proxy({}, {
+            get: function (target, prop) {
+                return function () {
+                    var args = Array.prototype.slice.call(arguments);
+                    if (window._appReady && window._realApp && window._realApp[prop]) {
+                        return window._realApp[prop].apply(null, args);
+                    } else {
+                        // Добавляем в очередь для выполнения после загрузки
+                        window._appQueue.push({ method: prop, args: args });
+                        console.log('[App] Queued:', prop, args);
+                    }
+                };
+            }
+        });
+
+        // Функция для активации реального App
+        window._activateApp = function (realApp) {
+            window._realApp = realApp;
+            window._appReady = true;
+
+            // Очищаем таймаут предупреждения
+            if (window._loadingTimeout) {
+                clearTimeout(window._loadingTimeout);
+            }
+
+            // Финальный прогресс
+            window._updateLoadingProgress(100, 'Готово!');
+
+            // Выполняем отложенные вызовы
+            window._appQueue.forEach(function (item) {
+                if (realApp[item.method]) {
+                    console.log('[App] Executing queued:', item.method, item.args);
+                    realApp[item.method].apply(null, item.args);
+                }
+            });
+            window._appQueue = [];
+
+            // Скрываем overlay с небольшой задержкой чтобы показать "Готово!"
+            setTimeout(function () {
+                var overlay = document.getElementById('app-loading-overlay');
+                if (overlay) {
+                    overlay.style.opacity = '0';
+                    setTimeout(function () { overlay.remove(); }, 300);
+                }
+            }, 200);
+
+            // Заменяем Proxy на реальный объект
+            window.App = realApp;
+        };
+    </script>
+
+    <div class="bg-pattern"></div>
+    <div class="bg-grid"></div>
+
+    <!-- ══════════════════════════════════════════════════════════════
+         NAVIGATION
+    ══════════════════════════════════════════════════════════════ -->
+    <nav>
+        <div class="logo" onclick="App.showSection('home')">llUPAT</div>
+        <ul class="nav-links">
+            <li><a onclick="App.showSection('home')" class="active" data-section="home">Главная</a></li>
+            <li><a onclick="App.showSection('members')" data-section="members">Участники</a></li>
+            <li><a onclick="App.showSection('tickets')" data-section="tickets" class="tickets-link">🎫 Тикеты</a></li>
+            <li id="nav-admin-link" style="display: none;"><a onclick="App.showSection('admin')" data-section="admin"
+                    class="admin-link">⚙️ Админ</a></li>
+            <li id="nav-auth-container">
+                <!-- Shows login button or user profile -->
+                <button class="nav-auth-btn" onclick="App.openAuthModal()">Войти</button>
+            </li>
+        </ul>
+    </nav>
+
+    <!-- ══════════════════════════════════════════════════════════════
+         AUTH MODAL
+    ══════════════════════════════════════════════════════════════ -->
+    <div class="auth-modal" id="auth-modal">
+        <div class="auth-modal-content" style="position: relative;">
+            <button class="auth-close" onclick="App.closeAuthModal()">✕</button>
+
+            <div class="auth-modal-header">
+                <h2>llUPAT</h2>
+                <p>Войдите или создайте аккаунт</p>
+            </div>
+
+            <div class="auth-tabs">
+                <button class="auth-tab active" onclick="App.switchAuthTab('login')" data-auth-tab="login">Вход</button>
+                <button class="auth-tab" onclick="App.switchAuthTab('register')"
+                    data-auth-tab="register">Регистрация</button>
+            </div>
+
+            <!-- Login Form -->
+            <div class="auth-form active" id="login-form">
+                <div class="auth-input-group">
+                    <label>Никнейм</label>
+                    <input type="text" id="login-username" placeholder="Введите ваш никнейм" autocomplete="username">
+                </div>
+                <div class="auth-input-group">
+                    <label>Пароль</label>
+                    <input type="password" id="login-password" placeholder="Введите пароль"
+                        onkeypress="if(event.key==='Enter')App.login()" autocomplete="current-password">
+                </div>
+                <button class="auth-btn auth-btn-primary" onclick="App.login()">Войти</button>
+                <p class="auth-error" id="login-error"></p>
+            </div>
+
+            <!-- Register Form -->
+            <div class="auth-form" id="register-form">
+                <div class="auth-input-group">
+                    <label>Никнейм</label>
+                    <input type="text" id="register-username" placeholder="Придумайте никнейм" autocomplete="username">
+                </div>
+                <div class="auth-input-group">
+                    <label>Пароль</label>
+                    <input type="password" id="register-password" placeholder="Минимум 6 символов"
+                        autocomplete="new-password">
+                </div>
+                <div class="auth-input-group">
+                    <label>Повторите пароль</label>
+                    <input type="password" id="register-password-confirm" placeholder="Повторите пароль"
+                        onkeypress="if(event.key==='Enter')App.register()" autocomplete="new-password">
+                </div>
+                <button class="auth-btn auth-btn-primary" onclick="App.register()">Создать аккаунт</button>
+                <p class="auth-error" id="register-error"></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- ══════════════════════════════════════════════════════════════
+         MAIN CONTENT
+    ══════════════════════════════════════════════════════════════ -->
+    <main>
+        <!-- HOME SECTION -->
+        <section id="home" class="active">
+            <div class="hero">
+                <h1 class="hero-title">llUPAT</h1>
+                <p class="hero-subtitle">DDNet Клан • Легенды создаются здесь</p>
+
+                <div class="hero-stats">
+                    <div class="stat">
+                        <div class="stat-value" id="members-count">0</div>
+                        <div class="stat-label">Участников</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-value">2020</div>
+                        <div class="stat-label">Год основания</div>
+                    </div>
+                </div>
+
+                <button onclick="App.showSection('tickets')" class="cta-button">Подать тикет</button>
+            </div>
+
+            <div class="modes-section">
+                <h2 class="section-title">Критерии для вступления</h2>
+
+                <div class="requirements-block">
+                    <div class="requirement-item">🎤 Обязательно нужен микрофон!</div>
+                    <div class="requirement-item">🧠 Адекватность!</div>
+                    <div class="requirement-item">💬 Общительность!</div>
+                    <div class="requirement-item">🔞 Возраст 14+</div>
+                </div>
+
+                <div class="modes-grid">
+                    <div class="mode-card">
+                        <div class="mode-image"><span class="mode-icon">🔨</span></div>
+                        <div class="mode-content">
+                            <h3 class="mode-title">Block</h3>
+                            <p class="mode-description">Классический режим. Для вступления необходимо пройти аттестацию
+                                у <strong>2-х проверяющих</strong> и набрать минимум <strong>6 из 10 баллов</strong>.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="mode-card">
+                        <div class="mode-image"><span class="mode-icon">⚡</span></div>
+                        <div class="mode-content">
+                            <h3 class="mode-title">Kog</h3>
+                            <p class="mode-description">King of Gores — режим для элиты. Требуется наличие <strong>1000
+                                    Fixed очков</strong> и не менее <strong>20 пройденных Hard карт</strong>.</p>
+                        </div>
+                    </div>
+
+                    <div class="mode-card">
+                        <div class="mode-image"><span class="mode-icon">🏎️</span></div>
+                        <div class="mode-content">
+                            <h3 class="mode-title">Race</h3>
+                            <p class="mode-description">Гонки на пределе возможностей. Минимальный порог: <strong>2000
+                                    общих очков</strong> и завершённые <strong>25 Brutal карт</strong>.</p>
+                        </div>
+                    </div>
+
+                    <div class="mode-card">
+                        <div class="mode-image"><span class="mode-icon">🎯</span></div>
+                        <div class="mode-content">
+                            <h3 class="mode-title">FNG</h3>
+                            <p class="mode-description">Динамичный PvP. Вызовите проверяющего на дуэль и докажите
+                                превосходство, набрав <strong>200 из 300 очков</strong>.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- MEMBERS SECTION -->
+        <section id="members">
+            <div class="container">
+                <h2 class="section-title">Наши участники</h2>
+
+                <div class="update-info">
+                    Последнее обновление: <span class="time" id="last-update">загрузка...</span>
+                </div>
+
+                <div class="mode-counts">
+                    <div class="mode-count-item"><span class="mode-count-dot block"></span> Block: <strong
+                            id="count-block">0</strong></div>
+                    <div class="mode-count-item"><span class="mode-count-dot kog"></span> Kog: <strong
+                            id="count-kog">0</strong></div>
+                    <div class="mode-count-item"><span class="mode-count-dot race"></span> Race: <strong
+                            id="count-race">0</strong></div>
+                    <div class="mode-count-item"><span class="mode-count-dot fng"></span> FNG: <strong
+                            id="count-fng">0</strong></div>
+                </div>
+
+                <div class="filter-tabs">
+                    <button class="filter-tab active" onclick="App.filterMembers('all')">Все</button>
+                    <button class="filter-tab block-tab" onclick="App.filterMembers('block')">🔨 Block</button>
+                    <button class="filter-tab kog-tab" onclick="App.filterMembers('kog')">⚡ Kog</button>
+                    <button class="filter-tab race-tab" onclick="App.filterMembers('race')">🏎️ Race</button>
+                    <button class="filter-tab fng-tab" onclick="App.filterMembers('fng')">🎯 FNG</button>
+                </div>
+
+                <div class="members-grid" id="members-grid">
+                    <div class="loading">
+                        <div class="loading-spinner"></div>
+                        <p>Загрузка участников...</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- TICKETS SECTION -->
+        <section id="tickets">
+            <div class="tickets-container">
+                <h2 class="section-title">🎫 Система тикетов</h2>
+
+                <!-- Ticket List View -->
+                <div id="tickets-list-view">
+                    <!-- Create Ticket Form Container -->
+                    <div class="ticket-create-form card" id="ticket-form-container">
+                        <!-- Will be filled dynamically based on auth state -->
+                        <div class="loading">
+                            <div class="loading-spinner"></div>
+                            <p>Загрузка...</p>
+                        </div>
+                    </div>
+
+                    <!-- My Tickets -->
+                    <h3 class="section-title" style="font-size: 1.5rem; margin-top: 2rem;">Мои тикеты</h3>
+
+                    <div class="ticket-filter-tabs">
+                        <button class="ticket-filter-tab active" onclick="App.filterTickets('all')" data-filter="all">
+                            Все <span class="count" id="filter-count-all">0</span>
+                        </button>
+                        <button class="ticket-filter-tab" onclick="App.filterTickets('open')" data-filter="open">
+                            Открытые <span class="count" id="filter-count-open">0</span>
+                        </button>
+                        <button class="ticket-filter-tab" onclick="App.filterTickets('in-progress')"
+                            data-filter="in-progress">
+                            В работе <span class="count" id="filter-count-progress">0</span>
+                        </button>
+                        <button class="ticket-filter-tab" onclick="App.filterTickets('closed')" data-filter="closed">
+                            Закрытые <span class="count" id="filter-count-closed">0</span>
+                        </button>
+                    </div>
+
+                    <div class="tickets-list" id="user-tickets-list">
+                        <div class="empty-tickets">
+                            <p>🎫 У вас пока нет тикетов</p>
+                            <small>Создайте тикет выше, чтобы связаться с администрацией</small>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Ticket Detail View -->
+                <div id="ticket-detail-view" style="display: none;">
+                    <button class="back-btn" onclick="App.closeTicketDetail()">
+                        ← Назад к списку
+                    </button>
+
+                    <div class="ticket-detail" id="ticket-detail-content">
+                        <!-- Will be filled dynamically -->
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ADMIN SECTION -->
+        <section id="admin">
+            <div class="container">
+                <!-- Access Denied Message -->
+                <div class="admin-login" id="admin-login">
+                    <h2>🔐 Доступ ограничен</h2>
+                    <p style="color: var(--text-muted); margin-bottom: 1.5rem;">
+                        Эта секция доступна только администраторам.<br>
+                        Пожалуйста, войдите в аккаунт с правами администратора.
+                    </p>
+                    <button class="btn btn-primary" onclick="App.openAuthModal()">Войти</button>
+                </div>
+
+                <!-- Dashboard -->
+                <div class="admin-dashboard" id="admin-dashboard">
+                    <div class="admin-header">
+                        <h2>⚙️ Панель управления</h2>
+                        <div style="display: flex; align-items: center; gap: 1rem;">
+                            <span class="admin-badge">🛡️ Администратор</span>
+                        </div>
+                    </div>
+
+                    <!-- Admin Tabs -->
+                    <div class="filter-tabs" style="margin-bottom: 2rem;">
+                        <button class="filter-tab active" onclick="App.showAdminTab('members')"
+                            data-admin-tab="members">👥 Участники</button>
+                        <button class="filter-tab" onclick="App.showAdminTab('tickets')" data-admin-tab="tickets">🎫
+                            Тикеты</button>
+                        <button class="filter-tab" onclick="App.showAdminTab('users')" data-admin-tab="users">👤
+                            Пользователи</button>
+                        <button class="filter-tab" onclick="App.showAdminTab('settings')" data-admin-tab="settings">⚙️
+                            Настройки</button>
+                    </div>
+
+                    <!-- Members Management Tab -->
+                    <div id="admin-members-tab">
+                        <div class="stats-grid">
+                            <div class="stat-card total">
+                                <div class="value" id="stat-total">0</div>
+                                <div class="label">Всего</div>
+                            </div>
+                            <div class="stat-card block">
+                                <div class="value" id="stat-block">0</div>
+                                <div class="label">Block</div>
+                            </div>
+                            <div class="stat-card kog">
+                                <div class="value" id="stat-kog">0</div>
+                                <div class="label">Kog</div>
+                            </div>
+                            <div class="stat-card race">
+                                <div class="value" id="stat-race">0</div>
+                                <div class="label">Race</div>
+                            </div>
+                            <div class="stat-card fng">
+                                <div class="value" id="stat-fng">0</div>
+                                <div class="label">FNG</div>
+                            </div>
+                        </div>
+
+                        <div class="admin-grid">
+                            <!-- Add Member Form -->
+                            <div class="sidebar">
+                                <div class="card">
+                                    <h3 class="card-title">➕ Добавить участника</h3>
+
+                                    <div class="avatar-preview" id="preview-box">?</div>
+
+                                    <div class="form-group">
+                                        <label>Discord ID</label>
+                                        <input type="text" id="inp-id" placeholder="Например: 123456789012345678"
+                                            oninput="App.loadAvatarById()">
+                                        <small style="display: block; margin-top: 4px; color: var(--success);">
+                                            ✨ Аватар загрузится автоматически
+                                        </small>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label>Никнейм</label>
+                                        <input type="text" id="inp-name" placeholder="Игровой ник">
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label>Game Modes (можно выбрать несколько)</label>
+                                        <div class="game-modes-checkboxes"
+                                            style="display: flex; flex-wrap: wrap; gap: 0.8rem; margin-top: 0.5rem;">
+                                            <label class="checkbox-label mode-checkbox"
+                                                style="background: rgba(239, 71, 111, 0.1); padding: 0.5rem 1rem; border-radius: 8px; border: 1px solid var(--block-color); cursor: pointer;">
+                                                <input type="checkbox" id="inp-mode-block" value="block">
+                                                🔨 Block
+                                            </label>
+                                            <label class="checkbox-label mode-checkbox"
+                                                style="background: rgba(114, 9, 183, 0.1); padding: 0.5rem 1rem; border-radius: 8px; border: 1px solid var(--kog-color); cursor: pointer;">
+                                                <input type="checkbox" id="inp-mode-kog" value="kog">
+                                                ⚡ Kog
+                                            </label>
+                                            <label class="checkbox-label mode-checkbox"
+                                                style="background: rgba(255, 209, 102, 0.1); padding: 0.5rem 1rem; border-radius: 8px; border: 1px solid var(--race-color); cursor: pointer;">
+                                                <input type="checkbox" id="inp-mode-race" value="race">
+                                                🏎️ Race
+                                            </label>
+                                            <label class="checkbox-label mode-checkbox"
+                                                style="background: rgba(6, 214, 160, 0.1); padding: 0.5rem 1rem; border-radius: 8px; border: 1px solid var(--fng-color); cursor: pointer;">
+                                                <input type="checkbox" id="inp-mode-fng" value="fng">
+                                                🎯 FNG
+                                            </label>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label>Роль</label>
+                                        <input type="text" id="inp-role" placeholder="Например: Матрос">
+                                    </div>
+
+                                    <div class="form-group">
+                                        <div class="form-row">
+                                            <label style="margin:0; flex:1;">Цвет роли:</label>
+                                            <input type="color" id="inp-role-color" value="#00b4d8"
+                                                style="width: 80px; height: 40px; padding: 0; border: none; cursor: pointer;">
+                                        </div>
+                                    </div>
+
+                                    <button class="btn btn-primary" onclick="App.saveMember()">Добавить
+                                        участника</button>
+                                </div>
+                            </div>
+
+                            <!-- Members Table -->
+                            <div class="main-content">
+                                <div class="card">
+                                    <div class="search-box">
+                                        <input type="text" id="admin-search" placeholder="🔍 Поиск по нику..."
+                                            onkeyup="App.filterTable()">
+                                    </div>
+
+                                    <div style="overflow-x: auto;">
+                                        <table class="admin-table">
+                                            <thead>
+                                                <tr>
+                                                    <th>Участник</th>
+                                                    <th>Режим</th>
+                                                    <th>Роль</th>
+                                                    <th style="text-align: right;">Действия</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody id="admin-table-body"></tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Tickets Management Tab -->
+                    <div id="admin-tickets-tab" style="display: none;">
+                        <div class="ticket-stats">
+                            <div class="ticket-stat-card">
+                                <div class="value" id="admin-tickets-total">0</div>
+                                <div class="label">Всего</div>
+                            </div>
+                            <div class="ticket-stat-card open">
+                                <div class="value" id="admin-tickets-open">0</div>
+                                <div class="label">Открытые</div>
+                            </div>
+                            <div class="ticket-stat-card in-progress">
+                                <div class="value" id="admin-tickets-progress">0</div>
+                                <div class="label">В работе</div>
+                            </div>
+                            <div class="ticket-stat-card closed">
+                                <div class="value" id="admin-tickets-closed">0</div>
+                                <div class="label">Закрытые</div>
+                            </div>
+                        </div>
+
+                        <div class="ticket-filter-tabs">
+                            <button class="ticket-filter-tab active" onclick="App.filterAdminTickets('all')"
+                                data-admin-filter="all">
+                                Все
+                            </button>
+                            <button class="ticket-filter-tab" onclick="App.filterAdminTickets('open')"
+                                data-admin-filter="open">
+                                Открытые
+                            </button>
+                            <button class="ticket-filter-tab" onclick="App.filterAdminTickets('in-progress')"
+                                data-admin-filter="in-progress">
+                                В работе
+                            </button>
+                            <button class="ticket-filter-tab" onclick="App.filterAdminTickets('closed')"
+                                data-admin-filter="closed">
+                                Закрытые
+                            </button>
+                        </div>
+
+                        <div class="card">
+                            <div class="search-box">
+                                <input type="text" id="admin-ticket-search"
+                                    placeholder="🔍 Поиск по режиму или автору..." onkeyup="App.searchAdminTickets()">
+                            </div>
+
+                            <div class="tickets-list" id="admin-tickets-list">
+                                <div class="loading">
+                                    <div class="loading-spinner"></div>
+                                    <p>Загрузка тикетов...</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Users Management Tab -->
+                    <div id="admin-users-tab" style="display: none;">
+                        <div class="card">
+                            <h3 class="card-title">👤 Управление пользователями</h3>
+                            <p style="color: var(--text-muted); margin-bottom: 1.5rem;">
+                                Здесь вы можете изменять роли зарегистрированных пользователей
+                            </p>
+                            <div id="users-list">
+                                <div class="loading">
+                                    <div class="loading-spinner"></div>
+                                    <p>Загрузка пользователей...</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Settings Tab -->
+                    <div id="admin-settings-tab" style="display: none;">
+                        <div class="card">
+                            <h3 class="card-title">🤖 Discord Avatar API</h3>
+                            <p style="color: var(--text-muted); margin-bottom: 1.5rem;">
+                                Статус API для загрузки аватарок Discord
+                            </p>
+
+                            <div style="display: flex; gap: 1rem; margin-bottom: 1.5rem;">
+                                <button class="btn btn-primary" onclick="App.checkProxyStatus()">
+                                    🔍 Проверить API
+                                </button>
+                            </div>
+
+                            <div id="proxy-status" style="margin-bottom: 1.5rem;"></div>
+                        </div>
+
+                        <div class="card" style="margin-top: 1.5rem;">
+                            <h3 class="card-title">📖 Настройка Bot Token в Vercel</h3>
+                            <ol style="color: var(--text-muted); line-height: 2.2; padding-left: 1.5rem;">
+                                <li>Получите Bot Token на <a href="https://discord.com/developers/applications"
+                                        target="_blank" style="color: var(--secondary);">Discord Developer Portal</a>
+                                </li>
+                                <li>Откройте ваш проект в <a href="https://vercel.com/dashboard" target="_blank"
+                                        style="color: var(--secondary);">Vercel Dashboard</a>
+                                </li>
+                                <li>Перейдите в <strong>Settings</strong> → <strong>Environment Variables</strong></li>
+                                <li>Добавьте переменную:
+                                    <pre
+                                        style="background: var(--bg-dark); padding: 0.5rem; border-radius: 4px; margin-top: 0.5rem; overflow-x: auto;"><code>DISCORD_BOT_TOKEN = ваш_токен</code></pre>
+                                </li>
+                                <li>Нажмите <strong>Save</strong> и сделайте <strong>Redeploy</strong></li>
+                            </ol>
+                            <div
+                                style="margin-top: 1rem; padding: 1rem; background: rgba(6, 214, 160, 0.1); border-radius: 8px; border-left: 3px solid var(--success);">
+                                <strong style="color: var(--success);">✅ После настройки:</strong>
+                                <span style="color: var(--text-muted);"> Аватарки будут загружаться автоматически через
+                                    <code
+                                        style="color: var(--secondary);">cdn.discordapp.com/avatars/{user_id}/{hash}.png</code></span>
+                            </div>
+                        </div>
+
+                        <div class="card" style="margin-top: 1.5rem;">
+                            <h3 class="card-title">🔄 Обновить все аватарки</h3>
+                            <p style="color: var(--text-muted); margin-bottom: 1rem;">
+                                Загрузить реальные аватарки Discord для всех участников клана
+                            </p>
+                            <button class="btn btn-primary" onclick="App.refreshAllAvatars()" id="refresh-avatars-btn">
+                                🔄 Обновить аватарки всех участников
+                            </button>
+                            <div id="refresh-progress" style="margin-top: 1rem;"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- PROFILE SECTION -->
+        <section id="profile">
+            <div class="container">
+                <div class="card" style="max-width: 600px; margin: 2rem auto;">
+                    <h2 style="font-family: 'Orbitron', sans-serif; margin-bottom: 1.5rem; text-align: center;">
+                        👤 Мой профиль
+                    </h2>
+                    <div id="profile-content">
+                        <div class="loading">
+                            <div class="loading-spinner"></div>
+                            <p>Загрузка профиля...</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="footer">
+        <div class="footer-content">
+            <p>© 2025 llUPAT Clan. Все права защищены.</p>
+            <p class="credits">Разработано с ❤️ by <span class="credit-name">ILA</span></p>
+        </div>
+    </footer>
+
+    <!-- MOBILE NAV -->
+    <div class="mobile-nav">
+        <button class="mobile-nav-btn active" onclick="App.showSection('home')" data-section="home">
+            <span>🏠</span>
+            Главная
+        </button>
+        <button class="mobile-nav-btn" onclick="App.showSection('members')" data-section="members">
+            <span>👥</span>
+            Участники
+        </button>
+        <button class="mobile-nav-btn" onclick="App.showSection('tickets')" data-section="tickets">
+            <span>🎫</span>
+            Тикеты
+        </button>
+        <button class="mobile-nav-btn" onclick="App.showSection('profile')" data-section="profile">
+            <span>👤</span>
+            Профиль
+        </button>
+        <button class="mobile-nav-btn" onclick="App.showSection('admin')" data-section="admin">
+            <span>⚙️</span>
+            Админ
+        </button>
+    </div>
+
+    <!-- TOAST -->
+    <div class="toast" id="toast"></div>
+
+    <!-- EDIT MODAL -->
+    <div id="edit-modal" class="modal-overlay">
+        <div class="modal-window">
+            <button class="close-modal" onclick="App.closeModal()">×</button>
+            <div class="modal-header">
+                <h2>✏️ Редактирование</h2>
+            </div>
+
+            <div class="avatar-preview" id="edit-preview-box">?</div>
+
+            <div class="form-group">
+                <label>Discord ID (нельзя изменить)</label>
+                <input type="text" id="edit-id" readonly style="opacity: 0.5; cursor: not-allowed;">
+            </div>
+
+            <div class="form-group">
+                <label>Никнейм</label>
+                <input type="text" id="edit-name">
+            </div>
+
+            <div class="form-group">
+                <label>Game Modes</label>
+                <div class="game-modes-checkboxes"
+                    style="display: flex; flex-wrap: wrap; gap: 0.8rem; margin-top: 0.5rem;">
+                    <label class="checkbox-label mode-checkbox"
+                        style="background: rgba(239, 71, 111, 0.1); padding: 0.5rem 1rem; border-radius: 8px; border: 1px solid var(--block-color); cursor: pointer;">
+                        <input type="checkbox" id="edit-mode-block" value="block">
+                        🔨 Block
+                    </label>
+                    <label class="checkbox-label mode-checkbox"
+                        style="background: rgba(114, 9, 183, 0.1); padding: 0.5rem 1rem; border-radius: 8px; border: 1px solid var(--kog-color); cursor: pointer;">
+                        <input type="checkbox" id="edit-mode-kog" value="kog">
+                        ⚡ Kog
+                    </label>
+                    <label class="checkbox-label mode-checkbox"
+                        style="background: rgba(255, 209, 102, 0.1); padding: 0.5rem 1rem; border-radius: 8px; border: 1px solid var(--race-color); cursor: pointer;">
+                        <input type="checkbox" id="edit-mode-race" value="race">
+                        🏎️ Race
+                    </label>
+                    <label class="checkbox-label mode-checkbox"
+                        style="background: rgba(6, 214, 160, 0.1); padding: 0.5rem 1rem; border-radius: 8px; border: 1px solid var(--fng-color); cursor: pointer;">
+                        <input type="checkbox" id="edit-mode-fng" value="fng">
+                        🎯 FNG
+                    </label>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>Роль</label>
+                <input type="text" id="edit-role">
+            </div>
+
+            <div class="form-group">
+                <div class="form-row">
+                    <label style="margin:0; flex:1;">Цвет роли:</label>
+                    <input type="color" id="edit-role-color" value="#00b4d8"
+                        style="width: 80px; height: 40px; padding: 0; border: none; cursor: pointer;">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="checkbox-label">
+                    <input type="checkbox" id="edit-birthday">
+                    🎂 День рождения
+                </label>
+            </div>
+
+            <div class="modal-actions">
+                <button class="btn btn-secondary" onclick="App.closeModal()">Отмена</button>
+                <button class="btn btn-primary" onclick="App.saveModalChanges()">Сохранить</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- TICKET VIEW MODAL -->
+    <div id="ticket-modal" class="modal-overlay">
+        <div class="modal-window" style="max-width: 700px;">
+            <button class="close-modal" onclick="App.closeTicketModal()">×</button>
+            <div id="ticket-modal-content">
+                <!-- Will be filled dynamically -->
+            </div>
+        </div>
+    </div>
+
+    <!-- PASSWORD CHANGE MODAL -->
+    <div id="password-modal" class="modal-overlay">
+        <div class="modal-window" style="max-width: 450px;">
+            <button class="close-modal" onclick="App.closePasswordModal()">×</button>
+            <div class="modal-header">
+                <h2>🔐 Смена пароля</h2>
+            </div>
+
+            <div class="form-group">
+                <label>Текущий пароль</label>
+                <div style="position: relative;">
+                    <input type="password" id="current-password" placeholder="Введите текущий пароль"
+                        style="padding-right: 3rem;">
+                    <button type="button" onclick="App.togglePasswordVisibility('current-password', this)"
+                        style="position: absolute; right: 0.5rem; top: 50%; transform: translateY(-50%); background: none; border: none; color: var(--text-muted); cursor: pointer; padding: 0.5rem; font-size: 1.2rem;">
+                        👁️
+                    </button>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>Новый пароль</label>
+                <div style="position: relative;">
+                    <input type="password" id="new-password" placeholder="Введите новый пароль"
+                        style="padding-right: 3rem;">
+                    <button type="button" onclick="App.togglePasswordVisibility('new-password', this)"
+                        style="position: absolute; right: 0.5rem; top: 50%; transform: translateY(-50%); background: none; border: none; color: var(--text-muted); cursor: pointer; padding: 0.5rem; font-size: 1.2rem;">
+                        👁️
+                    </button>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>Повторите новый пароль</label>
+                <div style="position: relative;">
+                    <input type="password" id="confirm-password" placeholder="Повторите новый пароль"
+                        style="padding-right: 3rem;">
+                    <button type="button" onclick="App.togglePasswordVisibility('confirm-password', this)"
+                        style="position: absolute; right: 0.5rem; top: 50%; transform: translateY(-50%); background: none; border: none; color: var(--text-muted); cursor: pointer; padding: 0.5rem; font-size: 1.2rem;">
+                        👁️
+                    </button>
+                </div>
+            </div>
+
+            <div class="modal-actions">
+                <button class="btn btn-secondary" onclick="App.closePasswordModal()">Отмена</button>
+                <button class="btn btn-primary" onclick="App.changePassword()">💾 Сохранить</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ══════════════════════════════════════════════════════════════
+         FIREBASE & SCRIPTS
+    ══════════════════════════════════════════════════════════════ -->
+    <script type="module">
+        // Прогресс: модуль начал загружаться
+        if (window._updateLoadingProgress) window._updateLoadingProgress(20, 'Загрузка Firebase...');
+
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-app.js";
+        import {
+            getDatabase, ref, set, onValue, remove, push, update, get, query, orderByChild, equalTo, off
+        } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-database.js";
+        import {
+            getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged, createUserWithEmailAndPassword,
+            browserLocalPersistence, setPersistence, EmailAuthProvider, reauthenticateWithCredential, updatePassword
+        } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-auth.js";
+        // App Check временно отключен для диагностики
+        import { initializeAppCheck, ReCaptchaV3Provider } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-app-check.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyBJbaGaHwdGEEz2xvIB3EM0BNpRU-fj4AU",
+            authDomain: "llupat-database.firebaseapp.com",
+            databaseURL: "https://llupat-database-default-rtdb.europe-west1.firebasedatabase.app",
+            projectId: "llupat-database",
+            storageBucket: "llupat-database.firebasestorage.app",
+            messagingSenderId: "1038954959558",
+            appId: "1:1038954959558:web:3b7e2833e33cade2a7fdc7"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+        const auth = getAuth(app);
+
+        // Прогресс: Firebase инициализирован
+        if (window._updateLoadingProgress) window._updateLoadingProgress(50, 'Настройка безопасности...');
+
+        // App Check временно отключен - раскомментируй после настройки
+        const appCheck = initializeAppCheck(app, {
+            provider: new ReCaptchaV3Provider('6Lc8mzMsAAAAAPrF2YNYrn-J23_9sPuk3Ly9qhkY'),
+            isTokenAutoRefreshEnabled: true
+        });
+
+        // Устанавливаем сохранение сессии в localStorage
+        setPersistence(auth, browserLocalPersistence);
+
+        // Прогресс: App Check настроен
+        if (window._updateLoadingProgress) window._updateLoadingProgress(70, 'Загрузка интерфейса...');
+
+        // ═══════════════════════════════════════════════════════════
+        // UTILITY FUNCTIONS
+        // ═══════════════════════════════════════════════════════════
+        const $ = id => document.getElementById(id);
+
+        function showToast(msg, isError = false) {
+            const toast = $('toast');
+            toast.textContent = msg;
+            toast.className = 'toast show' + (isError ? ' error' : '');
+            setTimeout(() => toast.classList.remove('show'), 3000);
+        }
+
+        function escapeHtml(text) {
+            if (!text) return '';
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        function getDefaultAvatar(id) {
+            // Используем официальные Default Avatars Discord
+            // Формула: (user_id >> 22) % 6 для новых аккаунтов
+            try {
+                const index = Number(BigInt(id) >> BigInt(22)) % 6;
+                return `https://cdn.discordapp.com/embed/avatars/${index}.png`;
+            } catch (e) {
+                // Fallback на ui-avatars если ID некорректный
+                const colors = ['FF6B35', '00B4D8', '7209B7', '06D6A0', 'FFD166', 'F72585', '4361EE', '4CC9F0'];
+                const hash = Math.abs(hashCode(id));
+                const color = colors[hash % colors.length];
+                const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ';
+                const char1 = chars[hash % chars.length];
+                const char2 = chars[(hash >> 5) % chars.length];
+                return `https://ui-avatars.com/api/?name=${char1}${char2}&background=${color}&color=fff&size=128&bold=true&format=svg`;
+            }
+        }
+
+        function getDiscordAvatarUrl(userId, avatarHash, size = 128) {
+            // Получаем URL аватара Discord если известен hash
+            if (!avatarHash) return getDefaultAvatar(userId);
+            const ext = avatarHash.startsWith('a_') ? 'gif' : 'png';
+            return `https://cdn.discordapp.com/avatars/${userId}/${avatarHash}.${ext}?size=${size}`;
+        }
+
+        function getAvatarFallback(id) {
+            // Резервный вариант - Discord default avatar
+            return getDefaultAvatar(id);
+        }
+
+        function hashCode(str) {
+            let hash = 0;
+            for (let i = 0; i < str.length; i++) {
+                hash = ((hash << 5) - hash) + str.charCodeAt(i);
+                hash |= 0;
+            }
+            return hash;
+        }
+
+        function generateTicketId() {
+            const timestamp = Date.now().toString(36);
+            const random = Math.random().toString(36).substring(2, 6);
+            return `TKT-${timestamp}-${random}`.toUpperCase();
+        }
+
+        function formatDate(timestamp) {
+            const date = new Date(timestamp);
+            return date.toLocaleDateString('ru-RU', {
+                day: '2-digit',
+                month: '2-digit',
+                year: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+        }
+
+        function getStatusLabel(status) {
+            const labels = {
+                'open': 'Открыт',
+                'in-progress': 'В работе',
+                'closed': 'Закрыт'
+            };
+            return labels[status] || status;
+        }
+
+        function getModeLabel(mode) {
+            const labels = {
+                'block': '🔨 Block',
+                'kog': '⚡ Kog',
+                'race': '🏎️ Race',
+                'fng': '🎯 FNG'
+            };
+            return labels[mode] || mode;
+        }
+
+        // ═══════════════════════════════════════════════════════════
+        // STATE MANAGEMENT
+        // ═══════════════════════════════════════════════════════════
+        const State = {
+            members: [],
+            allMembers: {},
+            tickets: {},
+            userTickets: [],
+            currentFilter: 'all',
+            currentTicketFilter: 'all',
+            currentAdminTicketFilter: 'all',
+            currentTicketId: null,
+            isAdmin: false,
+            isLoggedIn: false,
+            currentUser: null,
+            currentUserData: null,
+            allUsers: {},
+            currentAdminTab: 'members',
+            userId: localStorage.getItem('llupat_user_id') || generateUserId()
+        };
+
+        function generateUserId() {
+            const id = 'user_' + Date.now().toString(36) + Math.random().toString(36).substring(2, 8);
+            localStorage.setItem('llupat_user_id', id);
+            return id;
+        }
+
+        // ═══════════════════════════════════════════════════════════
+        // NAVIGATION
+        // ═══════════════════════════════════════════════════════════
+        function showSection(id) {
+            document.querySelectorAll('section').forEach(s => s.classList.remove('active'));
+            $(id).classList.add('active');
+
+            document.querySelectorAll('.nav-links a').forEach(a => {
+                a.classList.toggle('active', a.dataset.section === id);
+            });
+
+            document.querySelectorAll('.mobile-nav-btn').forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.section === id);
+            });
+        }
+
+        function showAdminTab(tab) {
+            State.currentAdminTab = tab;
+
+            document.querySelectorAll('[data-admin-tab]').forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.adminTab === tab);
+            });
+
+            $('admin-members-tab').style.display = tab === 'members' ? 'block' : 'none';
+            $('admin-tickets-tab').style.display = tab === 'tickets' ? 'block' : 'none';
+            $('admin-users-tab').style.display = tab === 'users' ? 'block' : 'none';
+            $('admin-settings-tab').style.display = tab === 'settings' ? 'block' : 'none';
+
+            // Refresh users list when opening users tab
+            if (tab === 'users' && Object.keys(State.allUsers).length > 0) {
+                renderUsersManagement(State.allUsers);
+            }
+
+            // Load proxy status when opening settings tab
+            if (tab === 'settings') {
+                checkProxyStatus();
+            }
+        }
+
+        // ═══════════════════════════════════════════════════════════
+        // MEMBERS FUNCTIONS
+        // ═══════════════════════════════════════════════════════════
+        function filterMembers(mode) {
+            State.currentFilter = mode;
+
+            document.querySelectorAll('.filter-tab').forEach(tab => {
+                const isActive = tab.textContent.toLowerCase().includes(mode) ||
+                    (mode === 'all' && tab.textContent.toLowerCase().includes('все'));
+                tab.classList.toggle('active', isActive);
+            });
+
+            renderMembers();
+        }
+
+        function renderMembers() {
+            const grid = $('members-grid');
+            let filtered = State.members;
+
+            if (State.currentFilter !== 'all') {
+                // Фильтруем по любому из режимов участника
+                filtered = State.members.filter(m => {
+                    const modes = m.gameModes || (m.gameMode ? [m.gameMode] : []);
+                    return modes.includes(State.currentFilter);
+                });
+            }
+
+            if (filtered.length === 0) {
+                grid.innerHTML = `
+                    <div class="loading">
+                        <p>Участников в этой категории пока нет</p>
+                    </div>
+                `;
+                return;
+            }
+
+            grid.innerHTML = filtered.map(m => {
+                const modes = m.gameModes || (m.gameMode ? [m.gameMode] : []);
+                const modeBadges = modes.map(mode =>
+                    `<span class="game-mode-badge ${mode}">${mode.toUpperCase()}</span>`
+                ).join('');
+
+                return `
+                <div class="member-card">
+                    <div class="member-avatar">
+                        <img src="${m.avatarUrl || getDefaultAvatar(m.id)}" 
+                             onerror="this.src='${getDefaultAvatar(m.id)}'">
+                    </div>
+                    <div class="member-info">
+                        <div class="member-name">${escapeHtml(m.name)}</div>
+                        <div class="member-badges">
+                            ${modeBadges}
+                            <span class="best-role" style="color: ${m.roleColor || 'var(--secondary)'}; border-color: ${m.roleColor || 'var(--secondary)'}">${escapeHtml(m.bestRole)}</span>
+                            ${m.birthday ? '<span class="birthday-badge">🎂 ДР!</span>' : ''}
+                        </div>
+                    </div>
+                </div>
+            `}).join('');
+        }
+
+        function updateMemberCount() {
+            $('members-count').textContent = State.members.length;
+        }
+
+        function updateModeCounts() {
+            const counts = { block: 0, kog: 0, race: 0, fng: 0 };
+            State.members.forEach(m => {
+                const modes = m.gameModes || (m.gameMode ? [m.gameMode] : []);
+                modes.forEach(mode => {
+                    if (counts[mode] !== undefined) counts[mode]++;
+                });
+            });
+
+            $('count-block').textContent = counts.block;
+            $('count-kog').textContent = counts.kog;
+            $('count-race').textContent = counts.race;
+            $('count-fng').textContent = counts.fng;
+        }
+
+        function updateLastUpdateInfo() {
+            const now = new Date();
+            $('last-update').textContent = now.toLocaleString('ru-RU');
+        }
+
+        // ═══════════════════════════════════════════════════════════
+        // TICKETS FUNCTIONS
+        // ═══════════════════════════════════════════════════════════
+        function renderTicketForm() {
+            const container = $('ticket-form-container');
+            if (!container) return;
+
+            // Check if user is logged in
+            if (!State.isLoggedIn || !State.currentUserData || !State.currentUser) {
+                container.innerHTML = `
+                    <div style="text-align: center; padding: 2rem;">
+                        <h3 class="card-title" style="margin-bottom: 1rem;">📝 Создать тикет</h3>
+                        <div style="color: var(--warning); font-size: 3rem; margin-bottom: 1rem;">🔒</div>
+                        <p style="color: var(--text-muted); margin-bottom: 1.5rem;">
+                            Для создания тикета необходимо войти в аккаунт
+                        </p>
+                        <button class="btn btn-primary" onclick="App.openAuthModal()">
+                            Войти / Регистрация
+                        </button>
+                    </div>
+                `;
+                return;
+            }
+
+            // Check if user has active ticket (open or in-progress) - check directly from all tickets
+            const userId = State.currentUser.uid;
+            const allTickets = Object.values(State.tickets || {});
+            const activeTicket = allTickets.find(t =>
+                t.userId === userId && (t.status === 'open' || t.status === 'in-progress')
+            );
+
+            if (activeTicket) {
+                const statusLabel = activeTicket.status === 'open' ? 'Открыт' : 'В работе';
+                const statusColor = activeTicket.status === 'open' ? 'var(--success)' : 'var(--warning)';
+
+                container.innerHTML = `
+                    <div style="text-align: center; padding: 2rem;">
+                        <h3 class="card-title" style="margin-bottom: 1rem;">📝 Создать тикет</h3>
+                        <div style="color: var(--secondary); font-size: 3rem; margin-bottom: 1rem;">📋</div>
+                        <p style="color: var(--text-muted); margin-bottom: 0.5rem;">
+                            У вас уже есть активный тикет
+                        </p>
+                        <p style="margin-bottom: 1.5rem;">
+                            <span style="color: ${statusColor}; font-weight: 600;">
+                                Статус: ${statusLabel}
+                            </span>
+                        </p>
+                        <button class="btn btn-primary" onclick="App.openTicketDetail('${activeTicket.id}')">
+                            Открыть тикет
+                        </button>
+                        <p style="color: var(--text-muted); font-size: 0.85rem; margin-top: 1rem;">
+                            Лимит: 1 активный тикет на пользователя
+                        </p>
+                    </div>
+                `;
+                return;
+            }
+
+            // Show create form
+            const username = State.currentUserData.username || '';
+            container.innerHTML = `
+                <h3 class="card-title">📝 Создать тикет</h3>
+
+                <div style="background: var(--bg-elevated); border: 1px solid var(--border); border-left: 3px solid var(--primary); border-radius: 8px; padding: 1rem; margin-bottom: 1.5rem;">
+                    <p style="color: var(--primary); font-weight: 600; margin-bottom: 0.5rem;">📋 Как составить заявку:</p>
+                    <p style="color: var(--text-muted); font-size: 0.9rem; line-height: 1.6; margin: 0;">
+                        1) Ваше имя?<br>
+                        2) Ваш игровой никнейм?<br>
+                        3) Сколько вам лет?<br>
+                        4) Ваш дискорд для связи с вами?
+                    </p>
+                </div>
+
+                <div class="form-group">
+                    <label>Ваше имя</label>
+                    <input type="text" id="ticket-author" value="${username}" readonly 
+                        style="background: var(--bg-dark); cursor: not-allowed;">
+                </div>
+
+                <div class="form-group">
+                    <label>Режим</label>
+                    <select id="ticket-mode">
+                        <option value="block">🔨 Block</option>
+                        <option value="kog">⚡ Kog</option>
+                        <option value="race">🏎️ Race</option>
+                        <option value="fng">🎯 FNG</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Сообщение</label>
+                    <textarea id="ticket-message" placeholder="Заполните заявку по шаблону выше..."></textarea>
+                </div>
+
+                <button class="btn btn-primary" onclick="App.createTicket()">Отправить тикет</button>
+                <p style="color: var(--text-muted); font-size: 0.85rem; margin-top: 1rem; text-align: center;">
+                    Лимит: 1 активный тикет на пользователя
+                </p>
+            `;
+        }
+
+        async function createTicket() {
+            // Check if logged in
+            if (!State.isLoggedIn || !State.currentUserData || !State.currentUser) {
+                showToast('Войдите в аккаунт для создания тикета', true);
+                openAuthModal();
+                return;
+            }
+
+            const userId = State.currentUser.uid;
+            const author = State.currentUserData.username;
+            const gameMode = $('ticket-mode')?.value;
+            const message = $('ticket-message')?.value?.trim();
+
+            if (!message) {
+                showToast('Введите сообщение!', true);
+                return;
+            }
+
+            // Disable button while checking
+            const submitBtn = document.querySelector('#ticket-form-container .btn-primary');
+            if (submitBtn) {
+                submitBtn.disabled = true;
+                submitBtn.textContent = 'Проверка...';
+            }
+
+            try {
+                // ВАЖНО: Используем query для получения только своих тикетов (соответствует правилам Firebase)
+                const userTicketsQuery = query(ref(db, 'tickets'), orderByChild('userId'), equalTo(userId));
+                const ticketsSnapshot = await get(userTicketsQuery);
+                const userTicketsData = ticketsSnapshot.val() || {};
+                const userTickets = Object.values(userTicketsData);
+
+                // Проверяем есть ли активный тикет
+                const activeTicket = userTickets.find(t =>
+                    t.status === 'open' || t.status === 'in-progress'
+                );
+
+                if (activeTicket) {
+                    showToast('У вас уже есть активный тикет!', true);
+                    // Обновляем локальный кэш тикетов пользователя
+                    Object.assign(State.tickets, userTicketsData);
+                    renderTicketForm();
+                    renderUserTickets();
+                    return;
+                }
+
+                const ticketId = generateTicketId();
+                const ticketData = {
+                    id: ticketId,
+                    author: author,
+                    userId: userId,
+                    gameMode: gameMode,
+                    status: 'open',
+                    createdAt: Date.now(),
+                    updatedAt: Date.now(),
+                    messages: [{
+                        id: 1,
+                        author: author,
+                        content: message,
+                        isAdmin: false,
+                        timestamp: Date.now()
+                    }]
+                };
+
+                await set(ref(db, 'tickets/' + ticketId), ticketData);
+                showToast('Тикет создан! ID: ' + ticketId);
+                if ($('ticket-message')) $('ticket-message').value = '';
+                // Form will update automatically via onValue listener
+            } catch (err) {
+                console.error('Create ticket error:', err);
+                showToast('Ошибка: ' + err.message, true);
+            } finally {
+                // Re-enable button
+                if (submitBtn) {
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = 'Отправить тикет';
+                }
+            }
+        }
+
+        function filterTickets(filter) {
+            State.currentTicketFilter = filter;
+
+            document.querySelectorAll('.ticket-filter-tab[data-filter]').forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.filter === filter);
+            });
+
+            renderUserTickets();
+        }
+
+        function renderUserTickets() {
+            const container = $('user-tickets-list');
+            if (!container) return;
+
+            // Проверяем авторизацию
+            if (!State.currentUser || !State.currentUser.uid) {
+                container.innerHTML = `
+                    <div class="empty-tickets">
+                        <p>🔒 Войдите в аккаунт</p>
+                        <small>Чтобы увидеть свои тикеты, необходимо авторизоваться</small>
+                    </div>
+                `;
+                // Reset counts
+                if ($('filter-count-all')) $('filter-count-all').textContent = '0';
+                if ($('filter-count-open')) $('filter-count-open').textContent = '0';
+                if ($('filter-count-progress')) $('filter-count-progress').textContent = '0';
+                if ($('filter-count-closed')) $('filter-count-closed').textContent = '0';
+                return;
+            }
+
+            // Get user tickets directly from all tickets
+            const userId = State.currentUser.uid;
+            const allTickets = Object.values(State.tickets || {});
+
+            // Фильтруем тикеты текущего пользователя
+            let userTickets = allTickets.filter(t => t.userId === userId);
+
+            // Update State.userTickets for consistency
+            State.userTickets = userTickets;
+
+            let tickets = userTickets;
+
+            if (State.currentTicketFilter !== 'all') {
+                tickets = tickets.filter(t => t.status === State.currentTicketFilter);
+            }
+
+            // Update counts
+            const allCount = userTickets.length;
+            const openCount = userTickets.filter(t => t.status === 'open').length;
+            const progressCount = userTickets.filter(t => t.status === 'in-progress').length;
+            const closedCount = userTickets.filter(t => t.status === 'closed').length;
+
+            if ($('filter-count-all')) $('filter-count-all').textContent = allCount;
+            if ($('filter-count-open')) $('filter-count-open').textContent = openCount;
+            if ($('filter-count-progress')) $('filter-count-progress').textContent = progressCount;
+            if ($('filter-count-closed')) $('filter-count-closed').textContent = closedCount;
+
+            if (tickets.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-tickets">
+                        <p>🎫 ${State.currentTicketFilter === 'all' ? 'У вас пока нет тикетов' : 'Нет тикетов в этой категории'}</p>
+                        <small>Создайте тикет выше, чтобы связаться с администрацией</small>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = tickets.sort((a, b) => b.updatedAt - a.updatedAt).map(ticket => `
+                <div class="ticket-card ${ticket.status}" onclick="App.openTicketDetail('${ticket.id}')">
+                    <div class="ticket-header">
+                        <div>
+                            <div class="ticket-title">${ticket.author} - ${getModeLabel(ticket.gameMode)}</div>
+                            <div class="ticket-id">${ticket.id}</div>
+                        </div>
+                        <span class="ticket-status ${ticket.status}">${getStatusLabel(ticket.status)}</span>
+                    </div>
+                    <div class="ticket-preview">
+                        ${ticket.messages[0].content.substring(0, 100)}${ticket.messages[0].content.length > 100 ? '...' : ''}
+                    </div>
+                    <div class="ticket-meta">
+                        <span>📅 ${formatDate(ticket.createdAt)}</span>
+                        <span>💬 ${ticket.messages.length} сообщений</span>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function openTicketDetail(ticketId) {
+            const ticket = State.tickets[ticketId];
+
+            if (!ticket) {
+                showToast('Тикет не найден', true);
+                return;
+            }
+
+            // Проверяем авторизацию
+            if (!State.currentUser) {
+                showToast('Войдите в аккаунт для просмотра тикета', true);
+                openAuthModal();
+                return;
+            }
+
+            const currentUserId = State.currentUser.uid;
+
+            // Проверяем доступ: только свои тикеты или админ
+            if (!State.isAdmin && ticket.userId !== currentUserId) {
+                showToast('У вас нет доступа к этому тикету', true);
+                return;
+            }
+
+            State.currentTicketId = ticketId;
+
+            $('tickets-list-view').style.display = 'none';
+            $('ticket-detail-view').style.display = 'block';
+
+            renderTicketDetail(ticket);
+        }
+
+        function renderTicketDetail(ticket) {
+            const isAdmin = State.isAdmin;
+            const container = $('ticket-detail-content');
+
+            container.innerHTML = `
+                <div class="ticket-detail-header">
+                    <h2 class="ticket-detail-title">${ticket.author} - ${getModeLabel(ticket.gameMode)}</h2>
+                    <div class="ticket-detail-info">
+                        <span>🎫 ${ticket.id}</span>
+                        <span>📅 ${formatDate(ticket.createdAt)}</span>
+                        <span class="ticket-status ${ticket.status}">${getStatusLabel(ticket.status)}</span>
+                    </div>
+                </div>
+
+                <div style="background: var(--bg-elevated); border: 1px solid var(--border); border-left: 3px solid var(--primary); border-radius: 8px; padding: 1rem; margin-bottom: 1.5rem;">
+                    <p style="color: var(--primary); font-weight: 600; margin-bottom: 0.5rem;">📋 Как составить заявку:</p>
+                    <p style="color: var(--text-muted); font-size: 0.9rem; line-height: 1.6; margin: 0;">
+                        1) Ваше имя?<br>
+                        2) Ваш игровой никнейм?<br>
+                        3) Сколько вам лет?<br>
+                        4) Ваш дискорд для связи с вами?
+                    </p>
+                </div>
+
+                <div class="ticket-messages" id="ticket-messages">
+                    ${ticket.messages.map(msg => `
+                        <div class="ticket-message ${msg.isAdmin ? 'admin' : 'user'}">
+                            <div class="message-author ${msg.isAdmin ? 'admin-author' : 'user-author'}">
+                                ${msg.isAdmin ? '🛡️ ' : '👤 '}${msg.author}
+                            </div>
+                            <div class="message-content">${msg.content}</div>
+                            <div class="message-time">${formatDate(msg.timestamp)}</div>
+                        </div>
+                    `).join('')}
+                </div>
+
+                ${ticket.status !== 'closed' ? `
+                    <div class="ticket-reply-form">
+                        <div class="form-group">
+                            <label>Ответить на тикет</label>
+                            <textarea id="ticket-reply" placeholder="Введите ваше сообщение..."></textarea>
+                        </div>
+                        <div class="ticket-actions">
+                            <button class="btn btn-primary" onclick="App.sendTicketReply('${ticket.id}')">
+                                Отправить
+                            </button>
+                            ${isAdmin ? `
+                                <button class="btn btn-warning" onclick="App.changeTicketStatus('${ticket.id}', 'in-progress')">
+                                    В работу
+                                </button>
+                                <button class="btn btn-danger" onclick="App.changeTicketStatus('${ticket.id}', 'closed')">
+                                    Закрыть
+                                </button>
+                                <button class="btn btn-danger" onclick="App.deleteTicket('${ticket.id}')" style="background: #8b0000;">
+                                    🗑️ Удалить
+                                </button>
+                            ` : ''}
+                        </div>
+                    </div>
+                ` : `
+                    <div style="text-align: center; padding: 2rem; color: var(--text-muted);">
+                        <p>🔒 Этот тикет закрыт</p>
+                        ${isAdmin ? `
+                            <div style="display: flex; gap: 1rem; justify-content: center; margin-top: 1rem;">
+                                <button class="btn btn-success" onclick="App.changeTicketStatus('${ticket.id}', 'open')">
+                                    Переоткрыть тикет
+                                </button>
+                                <button class="btn btn-danger" onclick="App.deleteTicket('${ticket.id}')">
+                                    🗑️ Удалить тикет
+                                </button>
+                            </div>
+                        ` : '<p style="margin-top: 1rem; font-size: 0.85rem;">Если вам нужна дополнительная помощь, создайте новый тикет.</p>'}
+                    </div>
+                `}
+            `;
+
+            // Scroll to bottom of messages
+            const messagesContainer = $('ticket-messages');
+            if (messagesContainer) {
+                messagesContainer.scrollTop = messagesContainer.scrollHeight;
+            }
+        }
+
+        function closeTicketDetail() {
+            State.currentTicketId = null;
+            $('tickets-list-view').style.display = 'block';
+            $('ticket-detail-view').style.display = 'none';
+        }
+
+        function sendTicketReply(ticketId) {
+            const replyText = $('ticket-reply').value.trim();
+
+            if (!replyText) {
+                showToast('Введите сообщение!', true);
+                return;
+            }
+
+            const ticket = State.tickets[ticketId];
+            if (!ticket) return;
+
+            // Проверяем доступ: только свои тикеты или админ
+            if (!State.isAdmin && ticket.userId !== State.currentUser?.uid) {
+                showToast('У вас нет доступа к этому тикету', true);
+                return;
+            }
+
+            // Получаем ник текущего пользователя
+            const authorName = State.currentUserData?.username || 'Пользователь';
+
+            const newMessage = {
+                id: ticket.messages.length + 1,
+                author: authorName,
+                content: replyText,
+                isAdmin: State.isAdmin,
+                timestamp: Date.now()
+            };
+
+            const updates = {};
+            updates[`tickets/${ticketId}/messages`] = [...ticket.messages, newMessage];
+            updates[`tickets/${ticketId}/updatedAt`] = Date.now();
+
+            update(ref(db), updates)
+                .then(() => {
+                    showToast('Сообщение отправлено!');
+                    $('ticket-reply').value = '';
+                })
+                .catch(err => showToast('Ошибка: ' + err.message, true));
+        }
+
+        function changeTicketStatus(ticketId, newStatus) {
+            // Только админы могут менять статус тикетов
+            if (!State.isAdmin) {
+                showToast('Только администраторы могут менять статус тикетов', true);
+                return;
+            }
+
+            const statusNames = {
+                'open': 'Открыт',
+                'in-progress': 'В работе',
+                'closed': 'Закрыт'
+            };
+
+            if (newStatus === 'closed' && !confirm('Вы уверены, что хотите закрыть этот тикет?')) {
+                return;
+            }
+
+            const updates = {};
+            updates[`tickets/${ticketId}/status`] = newStatus;
+            updates[`tickets/${ticketId}/updatedAt`] = Date.now();
+
+            update(ref(db), updates)
+                .then(() => {
+                    showToast(`Статус изменён на: ${statusNames[newStatus]}`);
+                })
+                .catch(err => showToast('Ошибка: ' + err.message, true));
+        }
+
+        function deleteTicket(ticketId) {
+            if (!State.isAdmin) {
+                showToast('Только администраторы могут удалять тикеты', true);
+                return;
+            }
+
+            if (!confirm('Вы уверены, что хотите удалить этот тикет? Это действие нельзя отменить.')) {
+                return;
+            }
+
+            remove(ref(db, 'tickets/' + ticketId))
+                .then(() => {
+                    showToast('Тикет удалён!');
+                    closeTicketModal();
+                    closeTicketDetail();
+                })
+                .catch(err => showToast('Ошибка: ' + err.message, true));
+        }
+
+        // Admin Tickets Functions
+        function filterAdminTickets(filter) {
+            State.currentAdminTicketFilter = filter;
+
+            document.querySelectorAll('.ticket-filter-tab[data-admin-filter]').forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.adminFilter === filter);
+            });
+
+            renderAdminTickets();
+        }
+
+        function searchAdminTickets() {
+            renderAdminTickets();
+        }
+
+        function renderAdminTickets() {
+            const container = $('admin-tickets-list');
+            let tickets = Object.values(State.tickets);
+
+            // Apply filter
+            if (State.currentAdminTicketFilter !== 'all') {
+                tickets = tickets.filter(t => t.status === State.currentAdminTicketFilter);
+            }
+
+            // Apply search
+            const searchTerm = $('admin-ticket-search')?.value.toLowerCase() || '';
+            if (searchTerm) {
+                tickets = tickets.filter(t =>
+                    t.gameMode.toLowerCase().includes(searchTerm) ||
+                    t.author.toLowerCase().includes(searchTerm) ||
+                    t.id.toLowerCase().includes(searchTerm)
+                );
+            }
+
+            // Update stats
+            const allTickets = Object.values(State.tickets);
+            $('admin-tickets-total').textContent = allTickets.length;
+            $('admin-tickets-open').textContent = allTickets.filter(t => t.status === 'open').length;
+            $('admin-tickets-progress').textContent = allTickets.filter(t => t.status === 'in-progress').length;
+            $('admin-tickets-closed').textContent = allTickets.filter(t => t.status === 'closed').length;
+
+            if (tickets.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-tickets">
+                        <p>🎫 Нет тикетов</p>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = tickets.sort((a, b) => b.updatedAt - a.updatedAt).map(ticket => `
+                <div class="ticket-card ${ticket.status}" onclick="App.openAdminTicketModal('${ticket.id}')">
+                    <div class="ticket-header">
+                        <div>
+                            <div class="ticket-title">${ticket.author} - ${getModeLabel(ticket.gameMode)}</div>
+                            <div class="ticket-id">${ticket.id}</div>
+                        </div>
+                        <span class="ticket-status ${ticket.status}">${getStatusLabel(ticket.status)}</span>
+                    </div>
+                    <div class="ticket-preview">
+                        ${ticket.messages[0].content.substring(0, 100)}${ticket.messages[0].content.length > 100 ? '...' : ''}
+                    </div>
+                    <div class="ticket-meta">
+                        <span>📅 ${formatDate(ticket.createdAt)}</span>
+                        <span>💬 ${ticket.messages.length} сообщений</span>
+                        <span>🔄 ${formatDate(ticket.updatedAt)}</span>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function openAdminTicketModal(ticketId) {
+            const ticket = State.tickets[ticketId];
+            if (!ticket) return;
+
+            const isAlreadyOpen = State.currentTicketId === ticketId;
+            State.currentTicketId = ticketId;
+
+            const modal = $('ticket-modal');
+            const content = $('ticket-modal-content');
+
+            content.innerHTML = `
+                <div class="modal-header">
+                    <h2>🎫 ${ticket.author} - ${getModeLabel(ticket.gameMode)}</h2>
+                </div>
+
+                <div class="ticket-detail-info" style="margin-bottom: 1.5rem;">
+                    <span>📋 ${ticket.id}</span>
+                    <span>📅 ${formatDate(ticket.createdAt)}</span>
+                    <span class="ticket-status ${ticket.status}">${getStatusLabel(ticket.status)}</span>
+                </div>
+
+                <div style="background: var(--bg-elevated); border: 1px solid var(--border); border-left: 3px solid var(--primary); border-radius: 8px; padding: 1rem; margin-bottom: 1.5rem;">
+                    <p style="color: var(--primary); font-weight: 600; margin-bottom: 0.5rem;">📋 Как составить заявку:</p>
+                    <p style="color: var(--text-muted); font-size: 0.9rem; line-height: 1.6; margin: 0;">
+                        1) Ваше имя?<br>
+                        2) Ваш игровой никнейм?<br>
+                        3) Сколько вам лет?<br>
+                        4) Ваш дискорд для связи с вами?
+                    </p>
+                </div>
+
+                <div class="ticket-messages" id="modal-ticket-messages" style="max-height: 300px;">
+                    ${ticket.messages.map(msg => `
+                        <div class="ticket-message ${msg.isAdmin ? 'admin' : 'user'}">
+                            <div class="message-author ${msg.isAdmin ? 'admin-author' : 'user-author'}">
+                                ${msg.isAdmin ? '🛡️ ' : '👤 '}${msg.author}
+                            </div>
+                            <div class="message-content">${msg.content}</div>
+                            <div class="message-time">${formatDate(msg.timestamp)}</div>
+                        </div>
+                    `).join('')}
+                </div>
+
+                ${ticket.status !== 'closed' ? `
+                    <div class="ticket-reply-form">
+                        <div class="form-group">
+                            <label>Ответ администратора</label>
+                            <textarea id="modal-ticket-reply" placeholder="Введите ваш ответ..."></textarea>
+                        </div>
+                        <div class="ticket-actions">
+                            <button class="btn btn-primary" onclick="App.sendAdminReply('${ticket.id}')">
+                                Отправить
+                            </button>
+                            <button class="btn btn-warning" onclick="App.changeTicketStatus('${ticket.id}', 'in-progress'); App.closeTicketModal();">
+                                В работу
+                            </button>
+                            <button class="btn btn-danger" onclick="App.changeTicketStatus('${ticket.id}', 'closed'); App.closeTicketModal();">
+                                Закрыть
+                            </button>
+                            <button class="btn btn-danger" onclick="App.deleteTicket('${ticket.id}')" style="background: #8b0000;">
+                                🗑️ Удалить
+                            </button>
+                        </div>
+                    </div>
+                ` : `
+                    <div style="text-align: center; padding: 1.5rem; color: var(--text-muted);">
+                        <p>🔒 Этот тикет закрыт</p>
+                        <div style="display: flex; gap: 1rem; justify-content: center; margin-top: 1rem;">
+                            <button class="btn btn-success" onclick="App.changeTicketStatus('${ticket.id}', 'open'); App.closeTicketModal();">
+                                Переоткрыть
+                            </button>
+                            <button class="btn btn-danger" onclick="App.deleteTicket('${ticket.id}')">
+                                🗑️ Удалить
+                            </button>
+                        </div>
+                    </div>
+                `}
+            `;
+
+            // Показываем модальное окно только если оно еще не открыто
+            if (!isAlreadyOpen) {
+                modal.style.display = 'flex';
+                setTimeout(() => modal.classList.add('open'), 10);
+            }
+
+            // Scroll messages to bottom
+            const messagesContainer = $('modal-ticket-messages');
+            if (messagesContainer) {
+                messagesContainer.scrollTop = messagesContainer.scrollHeight;
+            }
+        }
+
+        function sendAdminReply(ticketId) {
+            const replyText = $('modal-ticket-reply').value.trim();
+
+            if (!replyText) {
+                showToast('Введите сообщение!', true);
+                return;
+            }
+
+            const ticket = State.tickets[ticketId];
+            if (!ticket) return;
+
+            const newMessage = {
+                id: ticket.messages.length + 1,
+                author: State.currentUserData?.username || 'Администратор',
+                content: replyText,
+                isAdmin: true,
+                timestamp: Date.now()
+            };
+
+            const updates = {};
+            updates[`tickets/${ticketId}/messages`] = [...ticket.messages, newMessage];
+            updates[`tickets/${ticketId}/updatedAt`] = Date.now();
+
+            // Auto set to in-progress if it was open
+            if (ticket.status === 'open') {
+                updates[`tickets/${ticketId}/status`] = 'in-progress';
+            }
+
+            update(ref(db), updates)
+                .then(() => {
+                    showToast('Ответ отправлен!');
+                    $('modal-ticket-reply').value = '';
+                    // Небольшая задержка чтобы Firebase обновил данные
+                    setTimeout(() => openAdminTicketModal(ticketId), 100);
+                })
+                .catch(err => showToast('Ошибка: ' + err.message, true));
+        }
+
+        function closeTicketModal() {
+            const modal = $('ticket-modal');
+            modal.classList.remove('open');
+            setTimeout(() => modal.style.display = 'none', 300);
+            State.currentTicketId = null;
+        }
+
+        // ═══════════════════════════════════════════════════════════
+        // AVATAR FUNCTIONS (Discord API Integration)
+        // ═══════════════════════════════════════════════════════════
+        // Discord API Reference: https://discord.com/developers/docs/reference#image-formatting
+        // 
+        // Используем Vercel Serverless Functions для получения аватарок
+        // API endpoint: /api/avatar?id={userId}
+        // ═══════════════════════════════════════════════════════════
+
+        // Для Vercel - пустая строка (относительные пути)
+        // Для локальной разработки - http://localhost:3000
+        const DISCORD_API_URL = '';
+
+        function loadAvatarById() {
+            const id = $('inp-id').value.trim();
+            const previewBox = $('preview-box');
+
+            if (!id || id.length < 17) {
+                previewBox.innerHTML = '?';
+                previewBox.className = 'avatar-preview';
+                delete previewBox.dataset.avatarUrl;
+                delete previewBox.dataset.avatarHash;
+                return;
+            }
+
+            // Проверяем что это валидный Discord Snowflake ID
+            if (!/^\d{17,19}$/.test(id)) {
+                previewBox.innerHTML = '❌';
+                previewBox.className = 'avatar-preview error';
+                showToast('Некорректный Discord ID', true);
+                return;
+            }
+
+            fetchDiscordAvatar(id, previewBox);
+        }
+
+        function loadEditAvatarById(id) {
+            const previewBox = $('edit-preview-box');
+            if (!id || id.length < 17 || !/^\d{17,19}$/.test(id)) {
+                previewBox.innerHTML = '?';
+                previewBox.className = 'avatar-preview';
+                return;
+            }
+            fetchDiscordAvatar(id, previewBox);
+        }
+
+        async function fetchDiscordAvatar(userId, previewBox) {
+            // Получаем аватар через Vercel API
+            // Endpoint: /api/avatar?id={userId}
+
+            previewBox.innerHTML = '⏳';
+            previewBox.className = 'avatar-preview loading';
+
+            let avatarUrl = null;
+            let avatarHash = null;
+            let username = null;
+
+            try {
+                const controller = new AbortController();
+                const timeout = setTimeout(() => controller.abort(), 5000);
+
+                const response = await fetch(`${DISCORD_API_URL}/api/avatar?id=${userId}&size=256`, {
+                    signal: controller.signal,
+                    headers: { 'Accept': 'application/json' }
+                });
+                clearTimeout(timeout);
+
+                if (response.ok) {
+                    const data = await response.json();
+                    avatarUrl = data.avatarUrl;
+                    avatarHash = data.avatar;
+                    username = data.username;
+
+                    if (username && !data.isDefault) {
+                        showToast(`✓ ${username}`, false);
+                    }
+
+                    if (data.error) {
+                        console.log('API warning:', data.error);
+                    }
+                } else {
+                    const errorData = await response.json().catch(() => ({}));
+                    console.log('API error:', errorData);
+                    if (errorData.error?.includes('Invalid')) {
+                        showToast('Некорректный Discord ID', true);
+                    }
+                }
+            } catch (e) {
+                if (e.name === 'AbortError') {
+                    console.log('Request timeout');
+                } else {
+                    console.log('API unavailable:', e.message);
+                }
+            }
+
+            // Fallback на Discord Default Avatar
+            if (!avatarUrl) {
+                avatarUrl = getDefaultAvatar(userId);
+            }
+
+            // Загружаем изображение
+            const img = new Image();
+            img.onload = () => {
+                previewBox.innerHTML = '';
+                previewBox.appendChild(img);
+                previewBox.className = 'avatar-preview success';
+                previewBox.style.background = '';
+                previewBox.dataset.avatarUrl = avatarUrl;
+                if (avatarHash) {
+                    previewBox.dataset.avatarHash = avatarHash;
+                }
+            };
+            img.onerror = () => {
+                // Если Discord CDN не отвечает, используем fallback
+                const fallbackUrl = getDefaultAvatar(userId);
+                const fallbackImg = new Image();
+                fallbackImg.onload = () => {
+                    previewBox.innerHTML = '';
+                    previewBox.appendChild(fallbackImg);
+                    previewBox.className = 'avatar-preview success';
+                    previewBox.style.background = '';
+                    previewBox.dataset.avatarUrl = fallbackUrl;
+                };
+                fallbackImg.onerror = () => {
+                    // Финальный fallback на цветные буквы
+                    const hash = Math.abs(hashCode(userId));
+                    const colors = ['#FF6B35', '#00B4D8', '#7209B7', '#06D6A0', '#FFD166', '#F72585', '#4361EE'];
+                    const color = colors[hash % colors.length];
+                    const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ';
+                    const char1 = chars[hash % chars.length];
+                    const char2 = chars[(hash >> 5) % chars.length];
+                    previewBox.innerHTML = char1 + char2;
+                    previewBox.className = 'avatar-preview success';
+                    previewBox.style.background = color;
+                    previewBox.dataset.avatarUrl = '';
+                };
+                fallbackImg.src = fallbackUrl;
+            };
+            img.src = avatarUrl;
+        }
+
+        function loadAvatarPreview(url, previewBox) {
+            const img = new Image();
+            img.onload = () => {
+                previewBox.innerHTML = '';
+                previewBox.appendChild(img);
+                previewBox.className = 'avatar-preview success';
+            };
+            img.onerror = () => {
+                previewBox.innerHTML = '❌';
+                previewBox.className = 'avatar-preview error';
+            };
+            img.src = url;
+        }
+
+        // ═══════════════════════════════════════════════════════════
+        // DISCORD PROXY SERVER FUNCTIONS
+        // ═══════════════════════════════════════════════════════════
+        async function checkProxyStatus() {
+            const statusDiv = $('proxy-status');
+
+            statusDiv.innerHTML = `
+                <div style="padding: 1rem; background: var(--bg-elevated); border-radius: 8px;">
+                    <span style="color: var(--text-muted);">🔄 Проверка API...</span>
+                </div>
+            `;
+
+            try {
+                const controller = new AbortController();
+                const timeout = setTimeout(() => controller.abort(), 5000);
+
+                const response = await fetch(`${DISCORD_API_URL}/api/health`, {
+                    signal: controller.signal
+                });
+                clearTimeout(timeout);
+
+                if (response.ok) {
+                    const data = await response.json();
+                    statusDiv.innerHTML = `
+                        <div style="padding: 1rem; background: rgba(6, 214, 160, 0.1); border-radius: 8px; border-left: 3px solid var(--success);">
+                            <strong style="color: var(--success);">✅ API работает!</strong>
+                            <div style="margin-top: 0.5rem; color: var(--text-muted);">
+                                Статус: ${data.status}
+                                <br>Версия: ${data.version || '1.0.0'}
+                            </div>
+                        </div>
+                    `;
+                    showToast('API доступен!');
+                } else {
+                    throw new Error('Server returned ' + response.status);
+                }
+            } catch (error) {
+                let errorMessage = 'API недоступен';
+                if (error.name === 'AbortError') {
+                    errorMessage = 'Превышено время ожидания';
+                }
+
+                statusDiv.innerHTML = `
+                    <div style="padding: 1rem; background: rgba(239, 71, 111, 0.1); border-radius: 8px; border-left: 3px solid var(--danger);">
+                        <strong style="color: var(--danger);">❌ ${errorMessage}</strong>
+                        <div style="margin-top: 0.5rem; color: var(--text-muted);">
+                            Проверьте деплой на Vercel
+                        </div>
+                    </div>
+                `;
+                showToast('API недоступен', true);
+            }
+        }
+
+        async function refreshAllAvatars() {
+            // Проверяем доступность API
+            try {
+                const healthCheck = await fetch(`${DISCORD_API_URL}/api/health`);
+                if (!healthCheck.ok) throw new Error('API unavailable');
+            } catch (e) {
+                showToast('API недоступен', true);
+                return;
+            }
+
+            const members = Object.entries(State.allMembers);
+            if (members.length === 0) {
+                showToast('Нет участников для обновления', true);
+                return;
+            }
+
+            const progressDiv = $('refresh-progress');
+            const btn = $('refresh-avatars-btn');
+            btn.disabled = true;
+            btn.textContent = '⏳ Обновление...';
+
+            let updated = 0;
+            let failed = 0;
+
+            for (const [id, member] of members) {
+                progressDiv.innerHTML = `
+                    <div style="padding: 0.5rem; background: var(--bg-elevated); border-radius: 8px;">
+                        Обновление: ${member.name} (${updated + failed + 1}/${members.length})
+                    </div>
+                `;
+
+                try {
+                    const avatarUrl = await fetchAvatarFromProxy(id);
+                    if (avatarUrl) {
+                        await update(ref(db, 'members/' + id), { avatarUrl });
+                        updated++;
+                    } else {
+                        failed++;
+                    }
+                } catch (error) {
+                    console.error(`Failed to update avatar for ${id}:`, error);
+                    failed++;
+                }
+
+                // Small delay to avoid rate limiting
+                await new Promise(resolve => setTimeout(resolve, 500));
+            }
+
+            btn.disabled = false;
+            btn.textContent = '🔄 Обновить аватарки всех участников';
+
+            progressDiv.innerHTML = `
+                <div style="padding: 1rem; background: rgba(6, 214, 160, 0.1); border-radius: 8px; border-left: 3px solid var(--success);">
+                    <strong style="color: var(--success);">✅ Готово!</strong>
+                    <span style="color: var(--text-muted);"> — Обновлено: ${updated}, Ошибок: ${failed}</span>
+                </div>
+            `;
+
+            showToast(`Обновлено ${updated} аватарок`);
+        }
+
+        async function fetchAvatarFromProxy(userId) {
+            // Fetch avatar via Vercel API
+            try {
+                const response = await fetch(`${DISCORD_API_URL}/api/avatar?id=${userId}&size=256`);
+
+                if (response.ok) {
+                    const data = await response.json();
+                    if (data.avatarUrl && !data.isDefault) {
+                        return data.avatarUrl;
+                    }
+                }
+                return null;
+            } catch (error) {
+                console.error('API request error:', error);
+                return null;
+            }
+        }
+
+        // ═══════════════════════════════════════════════════════════
+        // AUTH FUNCTIONS
+        // ═══════════════════════════════════════════════════════════
+        function openAuthModal() {
+            const modal = $('auth-modal');
+            modal.style.display = 'flex';
+            setTimeout(() => modal.classList.add('open'), 10);
+        }
+
+        function closeAuthModal() {
+            const modal = $('auth-modal');
+            modal.classList.remove('open');
+            setTimeout(() => modal.style.display = 'none', 300);
+            // Clear errors and inputs
+            $('login-error').textContent = '';
+            $('register-error').textContent = '';
+        }
+
+        function switchAuthTab(tab) {
+            document.querySelectorAll('.auth-tab').forEach(t => t.classList.remove('active'));
+            document.querySelector(`[data-auth-tab="${tab}"]`).classList.add('active');
+
+            document.querySelectorAll('.auth-form').forEach(f => f.classList.remove('active'));
+            $(tab + '-form').classList.add('active');
+
+            // Clear errors
+            $('login-error').textContent = '';
+            $('register-error').textContent = '';
+        }
+
+        function usernameToEmail(username) {
+            // Convert username to fake email for Firebase Auth
+            return username.toLowerCase().replace(/[^a-z0-9]/g, '') + '@llupat.local';
+        }
+
+        async function register() {
+            const username = $('register-username').value.trim();
+            const password = $('register-password').value;
+            const passwordConfirm = $('register-password-confirm').value;
+
+            // Validation
+            if (!username) {
+                $('register-error').textContent = 'Введите никнейм';
+                return;
+            }
+            if (username.length < 3) {
+                $('register-error').textContent = 'Никнейм должен быть минимум 3 символа';
+                return;
+            }
+            if (username.length > 20) {
+                $('register-error').textContent = 'Никнейм не должен превышать 20 символов';
+                return;
+            }
+            if (password.length < 6) {
+                $('register-error').textContent = 'Пароль должен быть минимум 6 символов';
+                return;
+            }
+            if (password !== passwordConfirm) {
+                $('register-error').textContent = 'Пароли не совпадают';
+                return;
+            }
+
+            // Check if username already exists via public 'usernames' table
+            try {
+                const usernameKey = username.toLowerCase();
+                const usernameRef = ref(db, 'usernames/' + usernameKey);
+                const usernameSnapshot = await get(usernameRef);
+
+                if (usernameSnapshot.exists()) {
+                    $('register-error').textContent = 'Этот никнейм уже занят';
+                    return;
+                }
+
+                // Create user in Firebase Auth
+                const email = usernameToEmail(username);
+                const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+                const uid = userCredential.user.uid;
+
+                // Prepare user data
+                const userData = {
+                    username: username,
+                    role: 'user', // Default role
+                    createdAt: Date.now(),
+                    email: email
+                };
+
+                // Save user data AND register username atomically
+                const updates = {};
+                updates['users/' + uid] = userData;
+                updates['usernames/' + usernameKey] = uid;
+
+                await update(ref(db), updates);
+
+                // Manually update State and UI (faster than waiting for onAuthStateChanged)
+                State.currentUser = userCredential.user;
+                State.currentUserData = userData;
+                State.isLoggedIn = true;
+                State.isAdmin = false;
+
+                updateNavUI(userCredential.user, userData);
+                renderProfile(userData);
+
+                // Обновляем отображение тикетов для нового пользователя
+                renderUserTickets();
+                renderTicketForm();
+
+                showToast('Аккаунт создан! Добро пожаловать, ' + username);
+                closeAuthModal();
+
+                // Clear form
+                $('register-username').value = '';
+                $('register-password').value = '';
+                $('register-password-confirm').value = '';
+
+            } catch (error) {
+                console.error('Registration error:', error);
+                if (error.code === 'auth/email-already-in-use') {
+                    $('register-error').textContent = 'Этот никнейм уже зарегистрирован';
+                } else {
+                    $('register-error').textContent = 'Ошибка регистрации: ' + error.message;
+                }
+            }
+        }
+
+        async function login() {
+            const username = $('login-username').value.trim();
+            const password = $('login-password').value;
+
+            if (!username || !password) {
+                $('login-error').textContent = 'Введите никнейм и пароль';
+                return;
+            }
+
+            try {
+                const email = usernameToEmail(username);
+                const userCredential = await signInWithEmailAndPassword(auth, email, password);
+
+                // Load user data immediately
+                const userSnapshot = await get(ref(db, 'users/' + userCredential.user.uid));
+                const userData = userSnapshot.val();
+
+                if (userData) {
+                    // Update State
+                    State.currentUser = userCredential.user;
+                    State.currentUserData = userData;
+                    State.isLoggedIn = true;
+                    State.isAdmin = userData.role === 'admin';
+
+                    // Update UI
+                    updateNavUI(userCredential.user, userData);
+                    renderProfile(userData);
+
+                    // ВАЖНО: Устанавливаем listener для тикетов
+                    setupTicketsListener();
+
+                    // Handle admin panel
+                    if (State.isAdmin) {
+                        $('admin-login').style.display = 'none';
+                        $('admin-dashboard').classList.add('active');
+
+                        if (Object.keys(State.allMembers).length > 0) {
+                            renderAdminTable(State.allMembers);
+                            updateAdminStats(State.allMembers);
+                        }
+                    }
+                }
+
+                showToast('Вход выполнен!');
+                closeAuthModal();
+
+                // Clear form
+                $('login-username').value = '';
+                $('login-password').value = '';
+
+            } catch (error) {
+                console.error('Login error:', error);
+                $('login-error').textContent = 'Неверный никнейм или пароль';
+            }
+        }
+
+        function logout() {
+            signOut(auth).then(() => {
+                showToast('Вы вышли из системы');
+                closeUserDropdown();
+            });
+        }
+
+        function toggleUserDropdown() {
+            const dropdown = $('user-dropdown');
+            if (dropdown) {
+                dropdown.classList.toggle('show');
+            }
+        }
+
+        function closeUserDropdown() {
+            const dropdown = $('user-dropdown');
+            if (dropdown) {
+                dropdown.classList.remove('show');
+            }
+        }
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', (e) => {
+            if (!e.target.closest('.nav-user-wrapper')) {
+                closeUserDropdown();
+            }
+        });
+
+        function updateNavUI(user, userData) {
+            const container = $('nav-auth-container');
+            const adminLink = $('nav-admin-link');
+
+            if (user && userData) {
+                const initial = userData.username.charAt(0).toUpperCase();
+                const roleLabel = userData.role === 'admin' ? 'Администратор' : 'Участник';
+                const roleClass = userData.role === 'admin' ? 'admin' : '';
+
+                container.innerHTML = `
+                    <div class="nav-user-wrapper">
+                        <div class="nav-user" onclick="App.toggleUserDropdown()">
+                            <div class="nav-user-avatar">${initial}</div>
+                            <div class="nav-user-info">
+                                <span class="nav-user-name">${userData.username}</span>
+                                <span class="nav-user-role ${roleClass}">${roleLabel}</span>
+                            </div>
+                        </div>
+                        <div class="user-dropdown" id="user-dropdown">
+                            <div class="dropdown-item" onclick="App.showSection('profile'); App.closeUserDropdown();">
+                                👤 Мой профиль
+                            </div>
+                            ${userData.role === 'admin' ? `
+                            <div class="dropdown-item" onclick="App.showSection('admin'); App.closeUserDropdown();">
+                                ⚙️ Админ-панель
+                            </div>
+                            ` : ''}
+                            <div class="dropdown-divider"></div>
+                            <div class="dropdown-item danger" onclick="App.logout()">
+                                🚪 Выйти
+                            </div>
+                        </div>
+                    </div>
+                `;
+
+                // Show/hide admin link based on role
+                if (userData.role === 'admin') {
+                    adminLink.style.display = 'block';
+                } else {
+                    adminLink.style.display = 'none';
+                }
+            } else {
+                container.innerHTML = `
+                    <button class="nav-auth-btn" onclick="App.openAuthModal()">Войти</button>
+                `;
+                adminLink.style.display = 'none';
+            }
+        }
+
+        async function changeUserRole(uid, newRole) {
+            if (!State.isAdmin) {
+                showToast('У вас нет прав для этого действия', true);
+                return;
+            }
+
+            try {
+                await update(ref(db, 'users/' + uid), { role: newRole });
+                showToast('Роль пользователя изменена');
+            } catch (error) {
+                showToast('Ошибка: ' + error.message, true);
+            }
+        }
+
+        function renderUsersManagement(users) {
+            const container = $('users-list');
+            if (!container) return;
+
+            const usersArray = Object.entries(users);
+
+            if (usersArray.length === 0) {
+                container.innerHTML = '<p style="color: var(--text-muted); text-align: center;">Нет пользователей</p>';
+                return;
+            }
+
+            container.innerHTML = usersArray.map(([uid, user]) => `
+                <div class="user-row">
+                    <div class="user-row-info">
+                        <div class="user-row-avatar">${user.username.charAt(0).toUpperCase()}</div>
+                        <div>
+                            <div class="user-row-name">${user.username}</div>
+                            <div class="user-row-email">ID: ${uid.substring(0, 8)}...</div>
+                        </div>
+                    </div>
+                    <select class="role-select" onchange="App.changeUserRole('${uid}', this.value)" ${uid === State.currentUser?.uid ? 'disabled' : ''}>
+                        <option value="user" ${user.role === 'user' ? 'selected' : ''}>Участник</option>
+                        <option value="admin" ${user.role === 'admin' ? 'selected' : ''}>Администратор</option>
+                    </select>
+                </div>
+            `).join('');
+        }
+
+        // ═══════════════════════════════════════════════════════════
+        // MEMBER MANAGEMENT
+        // ═══════════════════════════════════════════════════════════
+        function saveMember() {
+            const id = $('inp-id').value.trim();
+            const name = $('inp-name').value.trim();
+
+            // Собираем выбранные режимы игры
+            const gameModes = [];
+            if ($('inp-mode-block').checked) gameModes.push('block');
+            if ($('inp-mode-kog').checked) gameModes.push('kog');
+            if ($('inp-mode-race').checked) gameModes.push('race');
+            if ($('inp-mode-fng').checked) gameModes.push('fng');
+
+            const role = $('inp-role').value.trim() || 'Участник';
+            const roleColor = $('inp-role-color').value;
+            const avatarUrl = $('preview-box').dataset.avatarUrl;
+
+            if (!id || !name) {
+                showToast('Заполните ID и никнейм!', true);
+                return;
+            }
+
+            if (gameModes.length === 0) {
+                showToast('Выберите хотя бы один режим игры!', true);
+                return;
+            }
+
+            set(ref(db, 'members/' + id), {
+                id, name, gameModes, gameMode: gameModes[0], bestRole: role, roleColor, avatarUrl
+            })
+                .then(() => {
+                    showToast(`${name} добавлен!`);
+                    clearAddForm();
+                })
+                .catch(err => showToast('Ошибка: ' + err.message, true));
+        }
+
+        function clearAddForm() {
+            $('inp-id').value = '';
+            $('inp-name').value = '';
+            $('inp-role').value = '';
+            $('inp-mode-block').checked = false;
+            $('inp-mode-kog').checked = false;
+            $('inp-mode-race').checked = false;
+            $('inp-mode-fng').checked = false;
+            $('preview-box').innerHTML = '?';
+            $('preview-box').className = 'avatar-preview';
+            delete $('preview-box').dataset.avatarUrl;
+        }
+
+        function deleteMember(id) {
+            const member = State.allMembers[id];
+            const name = member ? member.name : id;
+
+            if (confirm(`Удалить участника "${name}"?`)) {
+                remove(ref(db, 'members/' + id))
+                    .then(() => showToast(`${name} удалён`))
+                    .catch(err => showToast('Ошибка: ' + err.message, true));
+            }
+        }
+
+        function openEditModal(id) {
+            const m = State.allMembers[id];
+            if (!m) return;
+
+            $('edit-id').value = m.id;
+            $('edit-name').value = m.name;
+
+            // Получаем массив режимов (поддержка старого формата с одним режимом)
+            const modes = m.gameModes || (m.gameMode ? [m.gameMode] : []);
+            $('edit-mode-block').checked = modes.includes('block');
+            $('edit-mode-kog').checked = modes.includes('kog');
+            $('edit-mode-race').checked = modes.includes('race');
+            $('edit-mode-fng').checked = modes.includes('fng');
+
+            $('edit-role').value = m.bestRole;
+            $('edit-role-color').value = m.roleColor || '#00b4d8';
+            $('edit-birthday').checked = m.birthday || false;
+
+            const previewBox = $('edit-preview-box');
+            if (m.avatarUrl) {
+                loadAvatarPreview(m.avatarUrl, previewBox);
+                previewBox.dataset.avatarUrl = m.avatarUrl;
+            } else {
+                previewBox.innerHTML = '?';
+                previewBox.className = 'avatar-preview';
+            }
+
+            loadEditAvatarById(m.id);
+
+            const modal = $('edit-modal');
+            modal.style.display = 'flex';
+            setTimeout(() => modal.classList.add('open'), 10);
+        }
+
+        function closeModal() {
+            const modal = $('edit-modal');
+            modal.classList.remove('open');
+            setTimeout(() => modal.style.display = 'none', 300);
+        }
+
+        function saveModalChanges() {
+            const id = $('edit-id').value;
+            const name = $('edit-name').value.trim();
+
+            // Собираем выбранные режимы игры
+            const gameModes = [];
+            if ($('edit-mode-block').checked) gameModes.push('block');
+            if ($('edit-mode-kog').checked) gameModes.push('kog');
+            if ($('edit-mode-race').checked) gameModes.push('race');
+            if ($('edit-mode-fng').checked) gameModes.push('fng');
+
+            const role = $('edit-role').value.trim();
+            const color = $('edit-role-color').value;
+            const avatarUrl = $('edit-preview-box').dataset.avatarUrl;
+            const isBirthday = $('edit-birthday').checked;
+
+            if (!name) {
+                showToast('Имя не может быть пустым', true);
+                return;
+            }
+
+            if (gameModes.length === 0) {
+                showToast('Выберите хотя бы один режим игры!', true);
+                return;
+            }
+
+            const oldMember = State.allMembers[id] || {};
+
+            set(ref(db, 'members/' + id), {
+                ...oldMember,
+                name,
+                gameModes,
+                gameMode: gameModes[0], // Для обратной совместимости
+                bestRole: role || 'Участник',
+                roleColor: color,
+                avatarUrl: avatarUrl || oldMember.avatarUrl,
+                birthday: isBirthday
+            })
+                .then(() => {
+                    showToast('Изменения сохранены!');
+                    closeModal();
+                })
+                .catch(err => showToast('Ошибка: ' + err.message, true));
+        }
+
+        function renderAdminTable(data) {
+            const tbody = $('admin-table-body');
+            tbody.innerHTML = '';
+
+            Object.values(data).forEach(m => {
+                const modes = m.gameModes || (m.gameMode ? [m.gameMode] : []);
+                const modeBadges = modes.map(mode =>
+                    `<span class="role-badge" style="color: var(--${mode}-color); border-color: var(--${mode}-color)">${mode.toUpperCase()}</span>`
+                ).join(' ');
+
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>
+                        <div class="member-row-info">
+                            <img src="${m.avatarUrl || ''}" onerror="this.src='${getDefaultAvatar(m.id)}'">
+                            <div>
+                                <div class="member-row-name">${escapeHtml(m.name)}</div>
+                                <div class="member-row-id">${m.id}</div>
+                            </div>
+                        </div>
+                    </td>
+                    <td>${modeBadges}</td>
+                    <td><span class="role-badge" style="color: ${m.roleColor || '#00b4d8'}; border-color: ${m.roleColor || '#00b4d8'}">${escapeHtml(m.bestRole)}</span></td>
+                    <td style="text-align: right;">
+                        <button class="btn btn-edit" onclick="App.openEditModal('${m.id}')">✏️</button>
+                        <button class="btn btn-danger" onclick="App.deleteMember('${m.id}')">🗑️</button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function updateAdminStats(data) {
+            const list = Object.values(data);
+            $('stat-total').innerText = list.length;
+
+            // Считаем участников, у которых есть каждый режим
+            $('stat-block').innerText = list.filter(m => {
+                const modes = m.gameModes || (m.gameMode ? [m.gameMode] : []);
+                return modes.includes('block');
+            }).length;
+            $('stat-kog').innerText = list.filter(m => {
+                const modes = m.gameModes || (m.gameMode ? [m.gameMode] : []);
+                return modes.includes('kog');
+            }).length;
+            $('stat-race').innerText = list.filter(m => {
+                const modes = m.gameModes || (m.gameMode ? [m.gameMode] : []);
+                return modes.includes('race');
+            }).length;
+            $('stat-fng').innerText = list.filter(m => {
+                const modes = m.gameModes || (m.gameMode ? [m.gameMode] : []);
+                return modes.includes('fng');
+            }).length;
+        }
+
+        function filterTable() {
+            const term = $('admin-search').value.toLowerCase();
+            const filtered = Object.fromEntries(
+                Object.entries(State.allMembers).filter(([k, v]) =>
+                    v.name.toLowerCase().includes(term)
+                )
+            );
+            renderAdminTable(filtered);
+        }
+
+        // ═══════════════════════════════════════════════════════════
+        // TICKETS LISTENER (динамическая подписка в зависимости от роли)
+        // ═══════════════════════════════════════════════════════════
+        let ticketsUnsubscribe = null;
+
+        function setupTicketsListener() {
+            // Отписываемся от предыдущего listener если есть
+            if (ticketsUnsubscribe) {
+                ticketsUnsubscribe();
+                ticketsUnsubscribe = null;
+            }
+
+            // Если пользователь не авторизован - просто очищаем тикеты
+            if (!State.currentUser) {
+                State.tickets = {};
+                renderUserTickets();
+                renderTicketForm();
+                return;
+            }
+
+            // Создаём правильный query в зависимости от роли
+            let ticketsQuery;
+            if (State.isAdmin) {
+                // Админ видит все тикеты
+                ticketsQuery = ref(db, 'tickets');
+            } else {
+                // Обычный пользователь видит только свои тикеты
+                ticketsQuery = query(ref(db, 'tickets'), orderByChild('userId'), equalTo(State.currentUser.uid));
+            }
+
+            // Подписываемся на обновления
+            ticketsUnsubscribe = onValue(ticketsQuery, (snapshot) => {
+                const data = snapshot.val() || {};
+                State.tickets = data;
+
+                // Рендерим тикеты
+                renderUserTickets();
+                renderTicketForm();
+
+                if (State.isAdmin) {
+                    renderAdminTickets();
+                }
+
+                // Обновляем детали текущего тикета если открыт
+                if (State.currentTicketId && State.tickets[State.currentTicketId]) {
+                    const currentTicket = State.tickets[State.currentTicketId];
+                    if (State.isAdmin || currentTicket.userId === State.currentUser?.uid) {
+                        renderTicketDetail(currentTicket);
+                    }
+                }
+            }, (error) => {
+                console.error('Tickets listener error:', error);
+                State.tickets = {};
+                renderUserTickets();
+                renderTicketForm();
+            });
+        }
+
+        // ═══════════════════════════════════════════════════════════
+        // INITIALIZATION
+        // ═══════════════════════════════════════════════════════════
+        function init() {
+            // Прогресс: начинаем загрузку данных
+            if (window._updateLoadingProgress) window._updateLoadingProgress(85, 'Загрузка данных...');
+
+            // Listen to members
+            const membersRef = ref(db, 'members');
+            onValue(membersRef, (snapshot) => {
+                const data = snapshot.val();
+
+                if (data) {
+                    State.members = Object.values(data);
+                    State.allMembers = data;
+
+                    updateMemberCount();
+                    updateModeCounts();
+                    renderMembers();
+                    updateLastUpdateInfo();
+
+                    if (State.isAdmin) {
+                        renderAdminTable(data);
+                        updateAdminStats(data);
+                    }
+                } else {
+                    State.members = [];
+                    State.allMembers = {};
+                    $('members-grid').innerHTML = `
+                        <div class="error-message">
+                            <p>Список участников пуст</p>
+                        </div>
+                    `;
+                    updateMemberCount();
+                    updateModeCounts();
+                }
+            }, (error) => {
+                console.error("Firebase error:", error);
+                showToast("Ошибка загрузки данных", true);
+            });
+
+            // Tickets listener будет установлен после авторизации через setupTicketsListener()
+            // Это необходимо потому что обычные пользователи могут читать только свои тикеты
+
+            // Auth state listener
+            onAuthStateChanged(auth, (user) => {
+                State.currentUser = user;
+
+                if (user) {
+                    State.isLoggedIn = true;
+
+                    // Show loading state in nav
+                    const container = $('nav-auth-container');
+                    container.innerHTML = `<span style="color: var(--text-muted);">Загрузка...</span>`;
+
+                    // Load user data from database
+                    get(ref(db, 'users/' + user.uid)).then((userSnapshot) => {
+                        const userData = userSnapshot.val();
+
+                        if (userData) {
+                            State.currentUserData = userData;
+                            State.isAdmin = userData.role === 'admin';
+
+                            // Update navigation UI
+                            updateNavUI(user, userData);
+
+                            // Update profile section
+                            renderProfile(userData);
+
+                            // ВАЖНО: Устанавливаем listener для тикетов (зависит от роли)
+                            setupTicketsListener();
+
+                            // Handle admin panel visibility
+                            if (State.isAdmin) {
+                                $('admin-login').style.display = 'none';
+                                $('admin-dashboard').classList.add('active');
+
+                                if (Object.keys(State.allMembers).length > 0) {
+                                    renderAdminTable(State.allMembers);
+                                    updateAdminStats(State.allMembers);
+                                }
+                            } else {
+                                $('admin-login').style.display = 'block';
+                                $('admin-dashboard').classList.remove('active');
+                            }
+                        } else {
+                            // User data not found - might be old account
+                            State.isAdmin = false;
+                            State.currentUserData = null;
+                            updateNavUI(null, null);
+                            renderTicketForm();
+                        }
+                    }).catch((error) => {
+                        console.error('Error loading user data:', error);
+                        State.isAdmin = false;
+                        State.currentUserData = null;
+                        updateNavUI(null, null);
+                        renderTicketForm();
+                    });
+                } else {
+                    State.isLoggedIn = false;
+                    State.isAdmin = false;
+                    State.currentUser = null;
+                    State.currentUserData = null;
+                    State.userTickets = [];
+
+                    updateNavUI(null, null);
+
+                    // Очищаем listener тикетов
+                    setupTicketsListener();
+
+                    $('admin-login').style.display = 'block';
+                    $('admin-dashboard').classList.remove('active');
+
+                    // Clear profile
+                    const profileContent = $('profile-content');
+                    if (profileContent) {
+                        profileContent.innerHTML = `
+                            <div style="text-align: center; color: var(--text-muted);">
+                                <p>Войдите в аккаунт, чтобы увидеть профиль</p>
+                                <button class="btn btn-primary" onclick="App.openAuthModal()" style="margin-top: 1rem;">Войти</button>
+                            </div>
+                        `;
+                    }
+                }
+            });
+
+            // Listen to users for admin panel
+            const usersRef = ref(db, 'users');
+            onValue(usersRef, (snapshot) => {
+                const data = snapshot.val() || {};
+                State.allUsers = data;
+
+                if (State.isAdmin && State.currentAdminTab === 'users') {
+                    renderUsersManagement(data);
+                }
+            });
+        }
+
+        // ═══════════════════════════════════════════════════════════
+        // PASSWORD CHANGE FUNCTIONS
+        // ═══════════════════════════════════════════════════════════
+        function openPasswordModal() {
+            const modal = $('password-modal');
+            if (modal) {
+                modal.classList.add('open');
+                // Очищаем поля при открытии
+                $('current-password').value = '';
+                $('new-password').value = '';
+                $('confirm-password').value = '';
+            }
+        }
+
+        function closePasswordModal() {
+            const modal = $('password-modal');
+            if (modal) {
+                modal.classList.remove('open');
+            }
+        }
+
+        function togglePasswordVisibility(inputId, button) {
+            const input = $(inputId);
+            if (!input) return;
+
+            if (input.type === 'password') {
+                input.type = 'text';
+                button.textContent = '🙈';
+            } else {
+                input.type = 'password';
+                button.textContent = '👁️';
+            }
+        }
+
+        async function changePassword() {
+            const currentPassword = $('current-password')?.value;
+            const newPassword = $('new-password')?.value;
+            const confirmPassword = $('confirm-password')?.value;
+
+            // Валидация
+            if (!currentPassword || !newPassword || !confirmPassword) {
+                showToast('Заполните все поля', true);
+                return;
+            }
+
+            if (newPassword !== confirmPassword) {
+                showToast('Новые пароли не совпадают', true);
+                return;
+            }
+
+            if (newPassword.length < 6) {
+                showToast('Новый пароль должен быть минимум 6 символов', true);
+                return;
+            }
+
+            if (currentPassword === newPassword) {
+                showToast('Новый пароль должен отличаться от текущего', true);
+                return;
+            }
+
+            const user = auth.currentUser;
+            if (!user || !user.email) {
+                showToast('Пользователь не авторизован', true);
+                return;
+            }
+
+            try {
+                // Реаутентификация пользователя
+                const credential = EmailAuthProvider.credential(user.email, currentPassword);
+                await reauthenticateWithCredential(user, credential);
+
+                // Обновление пароля
+                await updatePassword(user, newPassword);
+
+                // Очистка полей
+                $('current-password').value = '';
+                $('new-password').value = '';
+                $('confirm-password').value = '';
+
+                // Закрываем модальное окно
+                closePasswordModal();
+
+                showToast('Пароль успешно изменён! ✅');
+            } catch (error) {
+                console.error('Password change error:', error);
+
+                if (error.code === 'auth/wrong-password' || error.code === 'auth/invalid-credential') {
+                    showToast('Неверный текущий пароль', true);
+                } else if (error.code === 'auth/weak-password') {
+                    showToast('Слишком слабый пароль', true);
+                } else if (error.code === 'auth/requires-recent-login') {
+                    showToast('Требуется повторный вход в аккаунт', true);
+                } else {
+                    showToast('Ошибка смены пароля: ' + error.message, true);
+                }
+            }
+        }
+
+        function renderProfile(userData) {
+            const container = $('profile-content');
+            if (!container) return;
+
+            const createdDate = new Date(userData.createdAt).toLocaleDateString('ru-RU', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+            });
+
+            container.innerHTML = `
+                <div style="text-align: center;">
+                    <div class="nav-user-avatar" style="width: 80px; height: 80px; font-size: 2rem; margin: 0 auto 1rem;">
+                        ${userData.username.charAt(0).toUpperCase()}
+                    </div>
+                    <h3 style="font-size: 1.5rem; margin-bottom: 0.5rem;">${userData.username}</h3>
+                    <span class="admin-badge" style="margin-bottom: 1.5rem; display: inline-flex;">
+                        ${userData.role === 'admin' ? '🛡️ Администратор' : '👤 Участник'}
+                    </span>
+                </div>
+                
+                <div style="margin-top: 2rem; padding-top: 1.5rem; border-top: 1px solid var(--border);">
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 1rem;">
+                        <span style="color: var(--text-muted);">Дата регистрации:</span>
+                        <span>${createdDate}</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between;">
+                        <span style="color: var(--text-muted);">Роль:</span>
+                        <span style="color: ${userData.role === 'admin' ? 'var(--danger)' : 'var(--secondary)'};">
+                            ${userData.role === 'admin' ? 'Администратор' : 'Участник'}
+                        </span>
+                    </div>
+                </div>
+                
+                <button class="btn btn-secondary" onclick="App.openPasswordModal()" style="width: 100%; margin-top: 2rem;">
+                    🔐 Сменить пароль
+                </button>
+                
+                <button class="btn btn-danger" onclick="App.logout()" style="width: 100%; margin-top: 1rem;">
+                    🚪 Выйти из аккаунта
+                </button>
+            `;
+        }
+
+        // ═══════════════════════════════════════════════════════════
+        // EXPORT TO GLOBAL SCOPE
+        // ═══════════════════════════════════════════════════════════
+        const _app = {
+            showSection,
+            showAdminTab,
+            filterMembers,
+            login,
+            logout,
+            register,
+            openAuthModal,
+            closeAuthModal,
+            switchAuthTab,
+            toggleUserDropdown,
+            closeUserDropdown,
+            changeUserRole,
+            saveMember,
+            deleteMember,
+            openEditModal,
+            closeModal,
+            saveModalChanges,
+            filterTable,
+            loadAvatarById,
+            // Ticket functions
+            createTicket,
+            filterTickets,
+            openTicketDetail,
+            closeTicketDetail,
+            sendTicketReply,
+            changeTicketStatus,
+            deleteTicket,
+            filterAdminTickets,
+            searchAdminTickets,
+            openAdminTicketModal,
+            sendAdminReply,
+            closeTicketModal,
+            // Proxy server functions
+            checkProxyStatus,
+            refreshAllAvatars,
+            // Password change functions
+            openPasswordModal,
+            closePasswordModal,
+            togglePasswordVisibility,
+            changePassword
+        };
+
+        // Прогресс: приложение готово к запуску
+        if (window._updateLoadingProgress) window._updateLoadingProgress(95, 'Запуск приложения...');
+
+        // Активируем App через систему очереди (для поддержки кликов до загрузки модуля)
+        if (typeof window._activateApp === 'function') {
+            window._activateApp(_app);
+        } else {
+            window.App = _app;
+        }
+
+        // Start the app
+        init();
+    </script>
+</body>
+
+</html>
